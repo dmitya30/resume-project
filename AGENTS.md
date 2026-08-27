@@ -1,0 +1,109 @@
+# AGENTS.md — Resume Project Execution Contract
+
+This file is the first operational source of truth after dialogue compression or context restoration.
+
+## Project purpose
+
+- Build truthful, evidence-based resumes and supporting job-search documents for Dmitry Mikhailovich Panevin.
+- Preserve the complete employment history while producing separate targeted resume variants where necessary.
+- Never discard experience before evaluating its relevance to target roles.
+- Do not present hypotheses, training, experiments, or self-study as paid employment or production experience.
+
+## User environment
+
+- Shell: Git Bash MINGW64 on Windows.
+- Canonical local repository path: `~/projects/resume-project`.
+- Canonical GitHub repository: `https://github.com/dmitya30/resume-project`.
+- The assistant writes commands and patches; the user applies them.
+- Every executable patch must begin with `cd ~/projects/resume-project`.
+- Never use `exit`, `exit 1`, `set -e`, or commands that close the active Git Bash session.
+
+## Context restoration order
+
+After dialogue compression or context loss, read sources in this order:
+
+1. `AGENTS.md`.
+2. `docs/resume-methodology.md`.
+3. Current structured resume-state documents, when they exist.
+4. `docs/FULL_PROTOCOL_2026-08-27.md` only for historical recovery, provenance checks, and unresolved details.
+5. Verify the current Git HEAD and working-tree state before proposing repository changes.
+
+Do not reconstruct missing facts from memory when the repository can be inspected. If an uncommitted local file is unavailable, ask the user to provide it instead of guessing its content.
+
+## Source hierarchy and evidence
+
+- User corrections and explicit confirmations override earlier dialogue summaries.
+- Employment documents and official extracts are primary evidence for dates, employers, and official job titles.
+- Official job titles must remain unchanged. Functional specialization may be explained separately through actual duties and achievements.
+- Public sources may verify organizations, websites, and public registrations, but do not prove personal authorship or responsibility without user confirmation.
+- A personal contextual profile is a source of hypotheses, not automatic proof.
+- Never invent dates, metrics, technologies, responsibilities, clients, revenue, project status, or results.
+- If handwriting or a source is unreadable, mark it as unresolved and ask for clarification.
+
+Use these evidence markers in internal working documents:
+
+- `[Д]` — confirmed by a document or official extract.
+- `[П]` — explicitly confirmed by the applicant.
+- `[В]` — checked in a public web source.
+- `[Г]` — hypothesis requiring confirmation.
+- `[Р]` — relevant to a selected target role.
+- `[N]` — background or currently non-target experience.
+
+## Resume methodology rules
+
+- Follow `docs/resume-methodology.md` and work through its phases rather than jumping directly to final wording.
+- Separate official employment, entrepreneurship, self-employment, freelance work, personal projects, training, and self-study.
+- Describe achievements conservatively and prefer verifiable scope, actions, and outcomes.
+- Do not modernize historical experience by assigning technologies or role names that were not used at the time.
+- Do not hide career gaps by inventing project work.
+- Personal bankruptcy is not included in a resume unless a specific legal or application context requires disclosure.
+- Self-employment is currently an internal fact and is not a blocker for employment. Include it only when relevant to a selected resume strategy.
+- Prepare multiple targeted resumes when one document would mix incompatible positioning.
+
+## Current strategic direction
+
+- Primary direction to validate: AI and business-process automation, n8n integrations, Telegram bots, and related technical implementation.
+- Secondary direction for faster employment: system administrator, IT engineer, infrastructure specialist, or technical support specialist.
+- The final priority depends on verification of recent projects and market fit.
+- Earlier unsuccessful positioning as an AI automation engineer is diagnostic information, not a reason to discard the direction.
+
+## Document maintenance
+
+- Keep current facts in compact structured documents and replace outdated or incomplete statements instead of endlessly appending corrections.
+- Preserve the full historical protocol as a recovery and provenance source, not as the primary everyday context.
+- Record unresolved contradictions explicitly.
+- Keep detailed project evidence separate from resume-ready wording.
+- Owner-facing conclusions and drafts are written in Russian.
+- Internal technical registers may be written in English.
+- Do not hard-wrap owner-facing prose at a fixed column width.
+- Every tracked text file should normally end with exactly one newline.
+- Empty lines inside documents are valid and are never blockers.
+- Additional blank lines at EOF are warnings, not blockers by themselves.
+- Spaces or tabs at the ends of lines are formatting defects and should be removed.
+
+## Repository patch rules
+
+- Deliver each operational change as one complete executable code block.
+- Do not use heredoc syntax.
+- Do not split one operation across multiple copied command blocks.
+- Do not invent repository paths, schemas, or filenames before inspecting the repository.
+- Prefer deterministic full-file replacements for small control documents and narrowly scoped edits for source records.
+- Do not ask the user to repair assistant-generated code manually.
+- If a delivered script has one localized defect, provide a minimal corrective patch rather than repeating unrelated operations.
+- Do not print full Git diffs from executable scripts.
+- Before commit, verify the exact staged file list and run `git diff --cached --check`.
+- A commit-and-push operation may be included only when explicitly requested or approved by the user.
+- On success, report only concise validation, commit, push, and status information. Diagnostic output is allowed on failure.
+
+## Privacy and safety
+
+- Do not commit passport data, SNILS, signatures, QR codes, bank details, private addresses, credentials, tokens, private contracts, or unredacted confidential records.
+- Public identifiers are included only when necessary and explicitly approved.
+- Before proposing publication of evidence, separate public portfolio material from private supporting records.
+
+## Current recovery checkpoint
+
+- The initial repository contains the resume methodology and the full protocol through 2026-08-27.
+- The accepted ООО «Артэкс» corrections must be extracted into the future structured state without changing their meaning.
+- Recent-project inventory begins only after repository context restoration and document restructuring.
+- Repository restructuring must preserve source provenance and must not delete the historical protocol until the user approves the resulting structured documents.
