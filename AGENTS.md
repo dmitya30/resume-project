@@ -24,9 +24,10 @@ After dialogue compression or context loss, read sources in this order:
 
 1. `AGENTS.md`.
 2. `docs/resume-methodology.md`.
-3. Current structured resume-state documents, when they exist.
-4. `docs/FULL_PROTOCOL_2026-08-27.md` only for historical recovery, provenance checks, and unresolved details.
-5. Verify the current Git HEAD and working-tree state before proposing repository changes.
+3. `docs/CONTEXT.md`.
+4. `docs/CANDIDATE_STATE.md`.
+5. `docs/archive/FULL_PROTOCOL_2026-08-27.md` only for historical recovery, provenance checks, and unresolved details.
+6. Verify the current Git HEAD and working-tree state before proposing repository changes.
 
 Do not reconstruct missing facts from memory when the repository can be inspected. If an uncommitted local file is unavailable, ask the user to provide it instead of guessing its content.
 
@@ -103,7 +104,10 @@ Use these evidence markers in internal working documents:
 
 ## Current recovery checkpoint
 
-- The initial repository contains the resume methodology and the full protocol through 2026-08-27.
-- The accepted ООО «Артэкс» corrections must be extracted into the future structured state without changing their meaning.
-- Recent-project inventory begins only after repository context restoration and document restructuring.
-- Repository restructuring must preserve source provenance and must not delete the historical protocol until the user approves the resulting structured documents.
+- Repository context was initialized at commit `f7cf603`.
+- `docs/CONTEXT.md` is the compact operational recovery point.
+- `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
+- `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
+- The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
+- The next substantive step after human approval is the inventory of recent projects.
+- Do not delete or rewrite the historical protocol without explicit user approval.
