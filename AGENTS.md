@@ -110,5 +110,5 @@ Use these evidence markers in internal working documents:
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
 - The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
-- The initial modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; the next substantive step is the detailed verification of AI Content Studio.
+- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; AI Content Studio has been verified as the primary modern end-to-end case, and the next substantive step is the detailed verification of «Элиор» and Elyor Poster.
 - Do not delete or rewrite the historical protocol without explicit user approval.
