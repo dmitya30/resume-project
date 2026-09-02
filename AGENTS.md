@@ -26,8 +26,9 @@ After dialogue compression or context loss, read sources in this order:
 2. `docs/resume-methodology.md`.
 3. `docs/CONTEXT.md`.
 4. `docs/CANDIDATE_STATE.md`.
-5. `docs/archive/FULL_PROTOCOL_2026-08-27.md` only for historical recovery, provenance checks, and unresolved details.
-6. Verify the current Git HEAD and working-tree state before proposing repository changes.
+5. `docs/PROJECT_INVENTORY.md`.
+6. `docs/archive/FULL_PROTOCOL_2026-08-27.md` only for historical recovery, provenance checks, and unresolved details.
+7. Verify the current Git HEAD and working-tree state before proposing repository changes.
 
 Do not reconstruct missing facts from memory when the repository can be inspected. If an uncommitted local file is unavailable, ask the user to provide it instead of guessing its content.
 
@@ -109,5 +110,5 @@ Use these evidence markers in internal working documents:
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
 - The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
-- The next substantive step after human approval is the inventory of recent projects.
+- The initial modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; the next substantive step is the detailed verification of AI Content Studio.
 - Do not delete or rewrite the historical protocol without explicit user approval.
