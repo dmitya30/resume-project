@@ -87,6 +87,8 @@ Use these evidence markers in internal working documents:
 
 - Deliver each operational change as one complete executable code block.
 - Do not use heredoc syntax.
+- Do not pass large scripts through `python -c`, `bash -c`, or another single command-line argument; Windows Git Bash may fail with `Argument list too long`.
+- For large generated patches, write the program to a temporary file under `.git/`, execute it, and remove it afterward.
 - Do not split one operation across multiple copied command blocks.
 - Do not invent repository paths, schemas, or filenames before inspecting the repository.
 - Prefer deterministic full-file replacements for small control documents and narrowly scoped edits for source records.
@@ -110,5 +112,5 @@ Use these evidence markers in internal working documents:
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
 - The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
-- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; AI Content Studio has been verified as the primary modern end-to-end case, and the next substantive step is the detailed verification of «Элиор» and Elyor Poster.
+- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review of the main projects was completed on 02.09.2026. AICS, «Элиор», «Тихий Дом» and MIKISSKIDS form the current core shortlist. The next substantive phase is job-market research, while only critical metric and payment confirmations remain open.
 - Do not delete or rewrite the historical protocol without explicit user approval.
