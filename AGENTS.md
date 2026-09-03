@@ -112,5 +112,5 @@ Use these evidence markers in internal working documents:
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
 - The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
-- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review of the main projects was completed on 02.09.2026. AICS, «Элиор», «Тихий Дом» and MIKISSKIDS form the current core shortlist. The next substantive phase is job-market research, while only critical metric and payment confirmations remain open.
+- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review of the main projects was completed on 02.09.2026. AICS, «Элиор», «Тихий Дом» and MIKISSKIDS form the current core shortlist. The «Элиор» questionnaire was completed on 03.09.2026. The next substantive phase is job-market research; only selected AICS evidence, external-payment confirmation and minor project contradictions remain open.
 - Do not delete or rewrite the historical protocol without explicit user approval.
