@@ -32,6 +32,16 @@ After dialogue compression or context loss, read sources in this order:
 
 Do not reconstruct missing facts from memory when the repository can be inspected. If an uncommitted local file is unavailable, ask the user to provide it instead of guessing its content.
 
+## Context and network economy
+
+- Treat the active dialogue memory as the primary working context while it remains intact.
+- Minimize repeated repository reads and web searches: use them only when they are necessary for correctness, required by the methodology, needed to inspect a file before changing it, or explicitly requested by the user.
+- Do not re-read unchanged repository files merely to reconfirm facts already retained in the active context.
+- Do not repeat market searches whose results are already sufficient for the current decision.
+- After dialogue compression, context loss, a suspected contradiction, or uncertainty about a source-controlled fact, restore context from the repository in the prescribed order instead of guessing.
+- Current market facts, live vacancies, platform behavior, and named external entities must still be verified when the task materially depends on their present state.
+- Prefer one focused retrieval pass over multiple overlapping calls, and retain the resulting conclusions in the working context and repository documents.
+
 ## Source hierarchy and evidence
 
 - User corrections and explicit confirmations override earlier dialogue summaries.
