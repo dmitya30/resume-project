@@ -123,4 +123,5 @@ Use these evidence markers in internal working documents:
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
 - The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
 - The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review was completed on 02.09.2026. Initial job-market research was completed on 03.09.2026 and recorded in `docs/MARKET_RESEARCH.md` and `docs/REQUIREMENTS_MATRIX.md`. The old HH resume audit is recorded in `docs/HH_PROFILE_AUDIT.md`. The current phase is building and launching two new HH resumes: «Инженер по автоматизации и AI-интеграциям» and «IT-инженер / системный администратор». Only HH is used at this stage; Habr Career and other channels are deferred.
+- The field-by-field HH wizard map, current main-resume settings, skill levels, work-experience blocks and remaining launch checks are stored in `docs/HH_WIZARD_GUIDE.md`.
 - Do not delete or rewrite the historical protocol without explicit user approval.
