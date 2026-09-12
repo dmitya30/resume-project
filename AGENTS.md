@@ -125,3 +125,11 @@ Use these evidence markers in internal working documents:
 - The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review was completed on 02.09.2026. Initial job-market research was completed on 03.09.2026 and recorded in `docs/MARKET_RESEARCH.md` and `docs/REQUIREMENTS_MATRIX.md`. The old HH resume audit is recorded in `docs/HH_PROFILE_AUDIT.md`. The current phase is building and launching two new HH resumes: «Инженер по автоматизации и AI-интеграциям» and «IT-инженер / системный администратор». Only HH is used at this stage; Habr Career and other channels are deferred.
 - The field-by-field HH wizard map, current main-resume settings, skill levels, work-experience blocks and remaining launch checks are stored in `docs/HH_WIZARD_GUIDE.md`.
 - Do not delete or rewrite the historical protocol without explicit user approval.
+
+## Public text character policy
+
+- In public-facing texts, including resumes, cover letters, profile descriptions, vacancy responses, portfolio captions, and messages to employers, use plain keyboard-safe punctuation.
+- Cyrillic letters are allowed. The only allowed typographic punctuation exception is Russian guillemets: `«»`.
+- Do not use Unicode em dashes or en dashes. Use the ASCII hyphen-minus: `-`.
+- Do not use Unicode bullets, arrows, non-breaking spaces, curly quotes, emoji, or decorative symbols. Use `-`, `->`, ordinary spaces, and `«»` instead.
+- Before delivering public text, check and normalize its punctuation according to this rule.
