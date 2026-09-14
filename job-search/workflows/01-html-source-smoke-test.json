@@ -1,0 +1,255 @@
+{
+  "name": "Job Search - 01 HTML Source Smoke Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "977ea85a-d219-4aed-a3bc-6faf15180ac0",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        160,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const searches = [\n  {\n    name: \"ai-automation\",\n    enabled: true,\n    text: \"AI automation engineer\",\n    area: \"1\",\n    pages: 1,\n  },\n];\n\nconst output = [];\n\nfor (const search of searches) {\n  if (!search.enabled) continue;\n\n  const pages = Math.max(1, Number(search.pages || 1));\n\n  for (let page = 0; page < pages; page += 1) {\n    const queryParams = {\n      text: search.text,\n      area: String(search.area),\n      order_by: \"publication_time\",\n      page: String(page),\n    };\n\n    const queryString = Object.entries(queryParams)\n      .map(([key, value]) =>\n        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`\n      )\n      .join(\"&\");\n\n    output.push({\n      json: {\n        source_query: search.name,\n        search_text: search.text,\n        page,\n        url: `https://hh.ru/search/vacancy?${queryString}`,\n      },\n    });\n  }\n}\n\nif (output.length === 0) {\n  throw new Error(\"No enabled search configurations\");\n}\n\nreturn output;"
+      },
+      "id": "4b1036b3-3a6b-45b0-b25c-4f94ba303cf6",
+      "name": "Generate Search URLs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "ru-RU,ru;q=0.9"
+            },
+            {
+              "name": "User-Agent",
+              "value": "JobSearchAssistant/0.1"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "0c72f745-f1dd-4ae2-b862-9fbe31b964e0",
+      "name": "Fetch Search Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst htmlCandidates = [\n  typeof response === \"string\" ? response : null,\n  response.data,\n  response.body,\n  response.response,\n];\nconst html = htmlCandidates.find((value) => typeof value === \"string\");\n\nif (!html) {\n  throw new Error(\"HTTP Request did not return an HTML string\");\n}\n\nconst source = $(\"Generate Search URLs\").first().json;\nconst normalizedHtml = html.replace(/&amp;/g, \"&\");\nconst pattern = /href=\"([^\"]*\\/vacancy\\/(\\d+)[^\"]*)\"/g;\nconst vacancies = new Map();\n\nfor (const match of normalizedHtml.matchAll(pattern)) {\n  const vacancyId = match[2];\n  const canonicalUrl = `https://hh.ru/vacancy/${vacancyId}`;\n\n  if (!vacancies.has(vacancyId)) {\n    vacancies.set(vacancyId, {\n      vacancy_id: vacancyId,\n      url: canonicalUrl,\n      source_query: source.source_query,\n      search_text: source.search_text,\n      search_page: source.page,\n    });\n  }\n}\n\nif (vacancies.size === 0) {\n  throw new Error(\"No vacancy links found in the search HTML\");\n}\n\nreturn Array.from(vacancies.values(), (vacancy) => ({ json: vacancy }));"
+      },
+      "id": "88b77546-9302-42d3-a633-568c6f6499eb",
+      "name": "Extract Vacancy Links",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nif (items.length === 0) {\n  throw new Error(\"No vacancies available for the detail smoke test\");\n}\n\nreturn [items[0]];"
+      },
+      "id": "c407c945-7cbd-4044-835f-44f22b14f327",
+      "name": "Select First Vacancy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "11c3899a-54d3-4086-ad96-140595bd96cd",
+      "name": "Wait Before Detail Request",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        288
+      ],
+      "webhookId": "08f0c4f0-c8a8-4d4a-a48f-000000000006"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "ru-RU,ru;q=0.9"
+            },
+            {
+              "name": "User-Agent",
+              "value": "JobSearchAssistant/0.1"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "de3b6753-93a1-483e-94b3-91feb070eefd",
+      "name": "Fetch Vacancy Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst htmlCandidates = [\n  typeof response === \"string\" ? response : null,\n  response.data,\n  response.body,\n  response.response,\n];\nconst html = htmlCandidates.find((value) => typeof value === \"string\");\n\nif (!html) {\n  throw new Error(\"Vacancy request did not return an HTML string\");\n}\n\nconst source = $(\"Select First Vacancy\").item.json;\n\nfunction decodeEntities(value) {\n  return String(value || \"\")\n    .replace(/&nbsp;/g, \" \")\n    .replace(/&amp;/g, \"&\")\n    .replace(/&quot;/g, String.fromCharCode(34))\n    .replace(/&#39;/g, String.fromCharCode(39))\n    .replace(/&lt;/g, \"<\")\n    .replace(/&gt;/g, \">\");\n}\n\nfunction cleanHtml(value) {\n  return decodeEntities(\n    String(value || \"\")\n      .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, \" \")\n      .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, \" \")\n      .replace(/<br\\s*\\/?>/gi, \"\\n\")\n      .replace(/<\\/p>/gi, \"\\n\")\n      .replace(/<\\/li>/gi, \"\\n\")\n      .replace(/<[^>]+>/g, \" \")\n  )\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/ *\\n */g, \"\\n\")\n    .replace(/\\n{3,}/g, \"\\n\\n\")\n    .trim();\n}\n\nfunction firstMatch(pattern) {\n  const match = html.match(pattern);\n  return match ? cleanHtml(match[1]) : \"\";\n}\n\nconst title = firstMatch(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);\nconst seoDescription = firstMatch(/<meta[^>]+name=\"description\"[^>]+content=\"([^\"]*)\"/i);\nconst company = firstMatch(/<[^>]+data-qa=\"vacancy-company-name\"[^>]*>([\\s\\S]*?)<\\/[^>]+>/i);\n\nconst descriptionText = firstMatch(\n  /<div[^>]*data-qa=\"vacancy-description\"[^>]*>([\\s\\S]*?)<\\/div>/i\n).slice(0, 20000);\n\nif (!title) {\n  throw new Error(\"Vacancy title was not extracted\");\n}\n\nreturn [{\n  json: {\n    vacancy_id: source.vacancy_id,\n    url: source.url,\n    source_query: source.source_query,\n    title,\n    company,\n    seo_description: seoDescription,\n    description_text: descriptionText,\n    description_found: descriptionText.length > 100,\n    description_length: descriptionText.length,\n    fetched_at: new Date().toISOString(),\n  },\n}];"
+      },
+      "id": "b0971d07-e12f-46a8-95df-be41276a576d",
+      "name": "Parse Vacancy Page",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        288
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Search URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Search URLs": {
+      "main": [
+        [
+          {
+            "node": "Fetch Search Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Search Page": {
+      "main": [
+        [
+          {
+            "node": "Extract Vacancy Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Vacancy Links": {
+      "main": [
+        [
+          {
+            "node": "Select First Vacancy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select First Vacancy": {
+      "main": [
+        [
+          {
+            "node": "Wait Before Detail Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Before Detail Request": {
+      "main": [
+        [
+          {
+            "node": "Fetch Vacancy Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Vacancy Page": {
+      "main": [
+        [
+          {
+            "node": "Parse Vacancy Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "43b2b44b-279f-4ed7-a483-f4cb32332dd1",
+  "meta": {
+    "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
+  },
+  "nodeGroups": [],
+  "id": "yON4EeVULOTnm4hg",
+  "tags": []
+}
