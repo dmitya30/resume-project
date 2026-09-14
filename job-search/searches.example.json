@@ -1,0 +1,23 @@
+[
+  {
+    "name": "ai-automation",
+    "enabled": false,
+    "text": "AI automation engineer",
+    "area": "1",
+    "pages": 1
+  },
+  {
+    "name": "n8n-integrations",
+    "enabled": false,
+    "text": "n8n интеграции",
+    "area": "1",
+    "pages": 1
+  },
+  {
+    "name": "system-administrator",
+    "enabled": false,
+    "text": "системный администратор",
+    "area": "1",
+    "pages": 1
+  }
+]
