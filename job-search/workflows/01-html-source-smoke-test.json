@@ -410,6 +410,16 @@
               "type": "string",
               "readOnly": false,
               "removed": false
+            },
+            {
+              "id": "last_error",
+              "displayName": "last_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -553,7 +563,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "c4064ba3-9a6b-42fc-935e-9adf2d35d6b1",
+  "versionId": "b24a397c-5e15-4a04-9fa5-dceedff1a2c7",
   "meta": {
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
   },
