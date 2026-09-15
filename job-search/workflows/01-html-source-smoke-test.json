@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const searches = [\n  {\n    name: \"ai-automation\",\n    enabled: true,\n    text: \"AI automation engineer\",\n    area: \"1\",\n    pages: 1,\n  },\n];\n\nconst output = [];\n\nfor (const search of searches) {\n  if (!search.enabled) continue;\n\n  const pages = Math.max(1, Number(search.pages || 1));\n\n  for (let page = 0; page < pages; page += 1) {\n    const queryParams = {\n      text: search.text,\n      area: String(search.area),\n      order_by: \"publication_time\",\n      page: String(page),\n    };\n\n    const queryString = Object.entries(queryParams)\n      .map(([key, value]) =>\n        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`\n      )\n      .join(\"&\");\n\n    output.push({\n      json: {\n        source_query: search.name,\n        search_text: search.text,\n        page,\n        url: `https://hh.ru/search/vacancy?${queryString}`,\n      },\n    });\n  }\n}\n\nif (output.length === 0) {\n  throw new Error(\"No enabled search configurations\");\n}\n\nreturn output;"
+        "jsCode": "const searches = [\n  {\n    name: \"ai-n8n-spb\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"n8n\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"description\",\n  },\n  {\n    name: \"ai-n8n-remote\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"n8n\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"description\",\n  },\n  {\n    name: \"ai-automation-spb\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"инженер по автоматизации\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"ai-automation-remote\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"инженер по автоматизации\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"it-engineer-spb\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"IT-инженер\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"it-engineer-remote\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"IT-инженер\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"sysadmin-spb\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"системный администратор\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"sysadmin-remote\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"системный администратор\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n];\n\nconst output = [];\n\nfor (const search of searches) {\n  if (!search.enabled) continue;\n\n  const pages = Math.max(1, Number(search.pages || 1));\n\n  for (let page = 0; page < pages; page += 1) {\n    const queryParams = {\n      text: search.text,\n      area: String(search.area),\n      order_by: \"publication_time\",\n      page: String(page),\n    };\n\n    if (search.schedule) {\n      queryParams.schedule = search.schedule;\n    }\n\n    if (search.search_field) {\n      queryParams.search_field = search.search_field;\n    }\n\n    const queryString = Object.entries(queryParams)\n      .map(([key, value]) =>\n        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`\n      )\n      .join(\"&\");\n\n    output.push({\n      json: {\n        source_query: search.name,\n        target_resume: search.target_resume,\n        search_text: search.text,\n        area: String(search.area),\n        schedule: search.schedule,\n        page,\n        url: `https://hh.ru/search/vacancy?${queryString}`,\n      },\n    });\n  }\n}\n\nif (output.length === 0) {\n  throw new Error(\"No enabled search configurations\");\n}\n\nreturn output;\n"
       },
       "id": "4b1036b3-3a6b-45b0-b25c-4f94ba303cf6",
       "name": "Generate Search URLs",
@@ -46,6 +46,12 @@
           ]
         },
         "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1500
+            }
+          },
           "response": {
             "response": {
               "responseFormat": "text"
@@ -65,7 +71,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.first().json;\nconst htmlCandidates = [\n  typeof response === \"string\" ? response : null,\n  response.data,\n  response.body,\n  response.response,\n];\nconst html = htmlCandidates.find((value) => typeof value === \"string\");\n\nif (!html) {\n  throw new Error(\"HTTP Request did not return an HTML string\");\n}\n\nconst source = $(\"Generate Search URLs\").first().json;\nconst normalizedHtml = html.replace(/&amp;/g, \"&\");\nconst pattern = /href=\"([^\"]*\\/vacancy\\/(\\d+)[^\"]*)\"/g;\nconst vacancies = new Map();\n\nfor (const match of normalizedHtml.matchAll(pattern)) {\n  const vacancyId = match[2];\n  const canonicalUrl = `https://hh.ru/vacancy/${vacancyId}`;\n\n  if (!vacancies.has(vacancyId)) {\n    vacancies.set(vacancyId, {\n      vacancy_id: vacancyId,\n      url: canonicalUrl,\n      source_query: source.source_query,\n      search_text: source.search_text,\n      search_page: source.page,\n    });\n  }\n}\n\nif (vacancies.size === 0) {\n  throw new Error(\"No vacancy links found in the search HTML\");\n}\n\nreturn Array.from(vacancies.values(), (vacancy) => ({ json: vacancy }));"
+        "jsCode": "const responseItems = $input.all();\nconst sourceItems = $(\"Generate Search URLs\").all();\n\nif (responseItems.length !== sourceItems.length) {\n  throw new Error(\n    `Search response count mismatch: ${responseItems.length} responses for ${sourceItems.length} configurations`\n  );\n}\n\nconst vacancies = new Map();\nconst searchErrors = [];\n\nfor (let index = 0; index < responseItems.length; index += 1) {\n  const response = responseItems[index].json;\n  const source = sourceItems[index]?.json;\n\n  if (!source) {\n    searchErrors.push(`Missing source configuration for item ${index}`);\n    continue;\n  }\n\n  const htmlCandidates = [\n    typeof response === \"string\" ? response : null,\n    response?.data,\n    response?.body,\n    response?.response,\n  ];\n\n  const html = htmlCandidates.find(\n    (value) => typeof value === \"string\"\n  );\n\n  if (!html) {\n    searchErrors.push(\n      `${source.source_query}: HTTP Request did not return an HTML string`\n    );\n    continue;\n  }\n\n  const normalizedHtml = html.replace(/&amp;/g, \"&\");\n  const pattern = /href=\"([^\"]*\\/vacancy\\/(\\d+)[^\"]*)\"/g;\n\n  let foundForQuery = 0;\n\n  for (const match of normalizedHtml.matchAll(pattern)) {\n    const vacancyId = match[2];\n    const canonicalUrl = `https://hh.ru/vacancy/${vacancyId}`;\n\n    if (!vacancies.has(vacancyId)) {\n      vacancies.set(vacancyId, {\n        vacancy_id: vacancyId,\n        url: canonicalUrl,\n        source_queries: [],\n        target_resumes: [],\n        search_texts: [],\n        search_pages: [],\n      });\n    }\n\n    const vacancy = vacancies.get(vacancyId);\n\n    if (!vacancy.source_queries.includes(source.source_query)) {\n      vacancy.source_queries.push(source.source_query);\n    }\n\n    if (\n      source.target_resume &&\n      !vacancy.target_resumes.includes(source.target_resume)\n    ) {\n      vacancy.target_resumes.push(source.target_resume);\n    }\n\n    if (!vacancy.search_texts.includes(source.search_text)) {\n      vacancy.search_texts.push(source.search_text);\n    }\n\n    const pageReference = `${source.source_query}:${source.page}`;\n\n    if (!vacancy.search_pages.includes(pageReference)) {\n      vacancy.search_pages.push(pageReference);\n    }\n\n    foundForQuery += 1;\n  }\n\n  if (foundForQuery === 0) {\n    searchErrors.push(\n      `${source.source_query}: no vacancy links found`\n    );\n  }\n}\n\nif (vacancies.size === 0) {\n  const details = searchErrors.length\n    ? ` Details: ${searchErrors.join(\"; \")}`\n    : \"\";\n\n  throw new Error(`No vacancy links found.${details}`);\n}\n\nreturn Array.from(vacancies.values())\n  .map((vacancy) => ({\n    json: {\n      vacancy_id: vacancy.vacancy_id,\n      url: vacancy.url,\n      source_query: vacancy.source_queries.join(\",\"),\n      target_resume_hint: vacancy.target_resumes.join(\",\"),\n      search_text: vacancy.search_texts.join(\" | \"),\n      search_page: vacancy.search_pages.join(\",\"),\n      search_warnings: searchErrors.join(\"; \"),\n    },\n  }));\n"
       },
       "id": "88b77546-9302-42d3-a633-568c6f6499eb",
       "name": "Extract Vacancy Links",
@@ -85,8 +91,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        928,
-        272
+        1088,
+        304
       ],
       "webhookId": "08f0c4f0-c8a8-4d4a-a48f-000000000006"
     },
@@ -130,22 +136,22 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1056,
-        304
+        1216,
+        272
       ]
     },
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const response = $json;\nconst htmlCandidates = [\n  typeof response === \"string\" ? response : null,\n  response.data,\n  response.body,\n  response.response,\n];\nconst html = htmlCandidates.find((value) => typeof value === \"string\");\n\nif (!html) {\n  throw new Error(\"Vacancy request did not return an HTML string\");\n}\n\nconst sourceItems = $('Only New Vacancies').all();\nconst source = sourceItems[$itemIndex]?.json;\n\nif (!source) {\n  throw new Error(`Source vacancy is missing for item ${$itemIndex}`);\n}\n\nfunction decodeEntities(value) {\n  return String(value || \"\")\n    .replace(/&nbsp;/g, \" \")\n    .replace(/&amp;/g, \"&\")\n    .replace(/&quot;/g, String.fromCharCode(34))\n    .replace(/&#39;/g, String.fromCharCode(39))\n    .replace(/&lt;/g, \"<\")\n    .replace(/&gt;/g, \">\");\n}\n\nfunction cleanHtml(value) {\n  return decodeEntities(\n    String(value || \"\")\n      .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, \" \")\n      .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, \" \")\n      .replace(/<br\\s*\\/?>/gi, \"\\n\")\n      .replace(/<\\/p>/gi, \"\\n\")\n      .replace(/<\\/li>/gi, \"\\n\")\n      .replace(/<[^>]+>/g, \" \")\n  )\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/ *\\n */g, \"\\n\")\n    .replace(/\\n{3,}/g, \"\\n\\n\")\n    .trim();\n}\n\nfunction firstMatch(pattern) {\n  const match = html.match(pattern);\n  return match ? cleanHtml(match[1]) : \"\";\n}\n\nconst title =\n  firstMatch(\n    /<h1[^>]+data-qa=\"vacancy-title\"[^>]*>([\\s\\S]*?)<\\/h1>/i\n  ) ||\n  firstMatch(\n    /<title[^>]*>([\\s\\S]*?)<\\/title>/i\n  );\n\nconst seoDescription = firstMatch(/<meta[^>]+name=\"description\"[^>]+content=\"([^\"]*)\"/i);\nconst company = firstMatch(/<[^>]+data-qa=\"vacancy-company-name\"[^>]*>([\\s\\S]*?)<\\/[^>]+>/i);\n\nconst descriptionText = firstMatch(\n  /<div[^>]*data-qa=\"vacancy-description\"[^>]*>([\\s\\S]*?)<\\/div>/i\n).slice(0, 20000);\n\nif (!title) {\n  throw new Error(\"Vacancy title was not extracted\");\n}\n\nreturn {\n  json: {\n    vacancy_id: source.vacancy_id,\n    url: source.url,\n    source_query: source.source_query,\n    title,\n    company,\n    seo_description: seoDescription,\n    description_text: descriptionText,\n    description_found: descriptionText.length > 100,\n    description_length: descriptionText.length,\n    fetched_at: new Date().toISOString(),\n  },\n};\n"
+        "jsCode": "const response = $json;\nconst htmlCandidates = [\n  typeof response === \"string\" ? response : null,\n  response.data,\n  response.body,\n  response.response,\n];\nconst html = htmlCandidates.find((value) => typeof value === \"string\");\n\nif (!html) {\n  throw new Error(\"Vacancy request did not return an HTML string\");\n}\n\nconst sourceItems = $(\"Limit New Vacancies\").all();\nconst source = sourceItems[$itemIndex]?.json;\n\nif (!source) {\n  throw new Error(`Source vacancy is missing for item ${$itemIndex}`);\n}\n\nfunction decodeEntities(value) {\n  return String(value || \"\")\n    .replace(/&nbsp;/g, \" \")\n    .replace(/&amp;/g, \"&\")\n    .replace(/&quot;/g, String.fromCharCode(34))\n    .replace(/&#39;/g, String.fromCharCode(39))\n    .replace(/&lt;/g, \"<\")\n    .replace(/&gt;/g, \">\");\n}\n\nfunction cleanHtml(value) {\n  return decodeEntities(\n    String(value || \"\")\n      .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, \" \")\n      .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, \" \")\n      .replace(/<br\\s*\\/?>/gi, \"\\n\")\n      .replace(/<\\/p>/gi, \"\\n\")\n      .replace(/<\\/li>/gi, \"\\n\")\n      .replace(/<[^>]+>/g, \" \")\n  )\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/ *\\n */g, \"\\n\")\n    .replace(/\\n{3,}/g, \"\\n\\n\")\n    .trim();\n}\n\nfunction firstMatch(pattern) {\n  const match = html.match(pattern);\n  return match ? cleanHtml(match[1]) : \"\";\n}\n\nconst title =\n  firstMatch(\n    /<h1[^>]+data-qa=\"vacancy-title\"[^>]*>([\\s\\S]*?)<\\/h1>/i\n  ) ||\n  firstMatch(\n    /<title[^>]*>([\\s\\S]*?)<\\/title>/i\n  );\n\nconst seoDescription = firstMatch(/<meta[^>]+name=\"description\"[^>]+content=\"([^\"]*)\"/i);\nconst company = firstMatch(/<[^>]+data-qa=\"vacancy-company-name\"[^>]*>([\\s\\S]*?)<\\/[^>]+>/i);\n\nconst descriptionText = firstMatch(\n  /<div[^>]*data-qa=\"vacancy-description\"[^>]*>([\\s\\S]*?)<\\/div>/i\n).slice(0, 20000);\n\nconst pageText = cleanHtml(html);\n\nconst workFormatMatch = pageText.match(\n  /Формат работы:\\s*(удал[её]нно или гибрид|гибрид|удал[её]нно|на месте работодателя|разъездной)/i\n);\n\nconst workFormatRaw = String(workFormatMatch?.[1] || \"\")\n  .replace(/\\u00a0/g, \" \")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nif (!title) {\n  throw new Error(\"Vacancy title was not extracted\");\n}\n\nreturn {\n  json: {\n    vacancy_id: source.vacancy_id,\n    url: source.url,\n    source_query: source.source_query,\n    title,\n    company,\n    seo_description: seoDescription,\n    work_format_raw: workFormatRaw,\n    description_text: descriptionText,\n    description_found: descriptionText.length > 100,\n    description_length: descriptionText.length,\n    fetched_at: new Date().toISOString(),\n  },\n};\n"
       },
       "id": "b0971d07-e12f-46a8-95df-be41276a576d",
       "name": "Parse Vacancy Page",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1184,
-        272
+        1360,
+        304
       ]
     },
     {
@@ -430,7 +436,7 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1440,
+        1776,
         272
       ],
       "id": "40e8207d-20b0-4b91-9175-bca87fb24981",
@@ -439,16 +445,43 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const vacancy = $json;\nconst now = new Date().toISOString();\nconst seo = String(vacancy.seo_description || \"\");\n\nfunction normalizeText(value) {\n  return String(value || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/\\s+([,.;:!?])/g, \"$1\")\n    .trim();\n}\n\nfunction toPublishedIso(value) {\n  const match = String(value || \"\").match(\n    /Дата публикации:\\s*(\\d{2})\\.(\\d{2})\\.(\\d{4})/\n  );\n\n  if (!match) return \"\";\n\n  const [, day, month, year] = match;\n  return `${year}-${month}-${day}T00:00:00.000Z`;\n}\n\nfunction createContentHash(value) {\n  const text = String(value || \"\");\n  let hash = 2166136261;\n\n  for (let index = 0; index < text.length; index += 1) {\n    hash ^= text.charCodeAt(index);\n    hash = Math.imul(hash, 16777619);\n  }\n\n  return (hash >>> 0).toString(16).padStart(8, \"0\");\n}\n\nconst salaryLocationMatch = seo.match(\n  /Зарплата:\\s*(.*?)\\.\\s*(.*?)\\.\\s*Требуемый опыт:/i\n);\n\nconst experienceMatch = seo.match(\n  /Требуемый опыт:\\s*(.*?)\\.\\s*Занятость:/i\n);\n\nconst descriptionText = normalizeText(vacancy.description_text);\n\nlet workFormat = \"\";\n\nif (/удал[её]н/i.test(descriptionText)) {\n  workFormat = \"remote\";\n} else if (/гибрид/i.test(descriptionText)) {\n  workFormat = \"hybrid\";\n}\n\nreturn {\n  json: {\n    vacancy_id: String(vacancy.vacancy_id),\n    url: String(vacancy.url),\n    title: normalizeText(vacancy.title),\n    company: normalizeText(vacancy.company),\n    salary: normalizeText(salaryLocationMatch?.[1]),\n    location: normalizeText(salaryLocationMatch?.[2]),\n    work_format: workFormat,\n    experience: normalizeText(experienceMatch?.[1]),\n    published_at: toPublishedIso(seo),\n    first_seen_at: now,\n    updated_at: now,\n    source_query: String(vacancy.source_query || \"\"),\n    description_text: descriptionText,\n    content_hash: createContentHash(descriptionText),\n    status: vacancy.description_found ? \"found\" : \"parse_failed\",\n    filter_reason: \"\",\n    score: 0,\n    recommended_resume: \"\",\n    analysis_json: \"\",\n    cover_letter: \"\",\n    telegram_message_id: \"\",\n    last_error: vacancy.description_found\n      ? \"\"\n      : \"Vacancy description was not extracted\",\n  },\n};\n"
+        "jsCode": "const vacancy = $json;\nconst now = new Date().toISOString();\nconst seo = String(vacancy.seo_description || \"\");\n\nfunction normalizeText(value) {\n  return String(value || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/\\s+([,.;:!?])/g, \"$1\")\n    .trim();\n}\n\nfunction toPublishedIso(value) {\n  const match = String(value || \"\").match(\n    /Дата публикации:\\s*(\\d{2})\\.(\\d{2})\\.(\\d{4})/\n  );\n\n  if (!match) return \"\";\n\n  const [, day, month, year] = match;\n  return `${year}-${month}-${day}T00:00:00.000Z`;\n}\n\nfunction createContentHash(value) {\n  const text = String(value || \"\");\n  let hash = 2166136261;\n\n  for (let index = 0; index < text.length; index += 1) {\n    hash ^= text.charCodeAt(index);\n    hash = Math.imul(hash, 16777619);\n  }\n\n  return (hash >>> 0).toString(16).padStart(8, \"0\");\n}\n\nconst salaryLocationMatch = seo.match(\n  /Зарплата:\\s*(.*?)\\.\\s*(.*?)\\.\\s*Требуемый опыт:/i\n);\n\nconst experienceMatch = seo.match(\n  /Требуемый опыт:\\s*(.*?)\\.\\s*Занятость:/i\n);\n\nconst descriptionText = normalizeText(vacancy.description_text);\n\nfunction normalizeWorkFormat(rawValue, descriptionValue) {\n  const raw = normalizeText(rawValue).toLowerCase();\n  const description = normalizeText(descriptionValue).toLowerCase();\n\n  if (/удал[её]нно или гибрид|гибрид/.test(raw)) {\n    return \"hybrid\";\n  }\n\n  if (/удал[её]нно|дистанционно/.test(raw)) {\n    return \"remote\";\n  }\n\n  if (/на месте работодателя|офис/.test(raw)) {\n    return \"office\";\n  }\n\n  if (/разъезд/.test(raw)) {\n    return \"field\";\n  }\n\n  if (\n    /работа только в офисе|удал[её]нного формата нет|удал[её]нной работы нет/.test(\n      description\n    )\n  ) {\n    return \"office\";\n  }\n\n  if (\n    /разъездн(?:ая|ой|ую)\\s+работ|выезжать к клиентам|выездн(?:ая|ой|ые)\\s+работ/.test(\n      description\n    )\n  ) {\n    return \"field\";\n  }\n\n  if (/гибридн(?:ая|ый|ое|ом)\\s+(?:работа|формат)/.test(description)) {\n    return \"hybrid\";\n  }\n\n  if (\n    /удал[её]нн(?:ая|ый|ое|ой)\\s+(?:работа|формат)|работа\\s+удал[её]нно/.test(\n      description\n    )\n  ) {\n    return \"remote\";\n  }\n\n  return \"unspecified\";\n}\n\nconst workFormat = normalizeWorkFormat(\n  vacancy.work_format_raw,\n  descriptionText\n);\n\nreturn {\n  json: {\n    vacancy_id: String(vacancy.vacancy_id),\n    url: String(vacancy.url),\n    title: normalizeText(vacancy.title),\n    company: normalizeText(vacancy.company),\n    salary: normalizeText(salaryLocationMatch?.[1]),\n    location: normalizeText(salaryLocationMatch?.[2]),\n    work_format: workFormat,\n    experience: normalizeText(experienceMatch?.[1]),\n    published_at: toPublishedIso(seo),\n    first_seen_at: now,\n    updated_at: now,\n    source_query: String(vacancy.source_query || \"\"),\n    description_text: descriptionText,\n    content_hash: createContentHash(descriptionText),\n    status: vacancy.description_found ? \"found\" : \"parse_failed\",\n    filter_reason: \"\",\n    score: 0,\n    recommended_resume: \"\",\n    analysis_json: \"\",\n    cover_letter: \"\",\n    telegram_message_id: \"\",\n    last_error: vacancy.description_found\n      ? \"\"\n      : \"Vacancy description was not extracted\",\n  },\n};\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1312,
-        304
+        1504,
+        272
       ],
       "id": "9b8c42d5-04fc-453d-bea3-a730dd9a34ab",
       "name": "Prepare Data Table Row"
+    },
+    {
+      "parameters": {
+        "jsCode": "const maxNewVacanciesPerRun = 40;\nconst items = $input.all();\n\nreturn items.slice(0, maxNewVacanciesPerRun);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        272
+      ],
+      "id": "25be44b9-7924-4801-bd72-bd781cd5251a",
+      "name": "Limit New Vacancies"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const vacancy = { ...$json };\n\nconst title = String(vacancy.title || \"\")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nconst description = String(vacancy.description_text || \"\")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nconst reasons = [];\n\nconst location = String(vacancy.location || \"\")\n  .replace(/\\s+/g, \" \")\n  .trim()\n  .toLowerCase();\n\nconst workFormat = String(vacancy.work_format || \"\")\n  .trim()\n  .toLowerCase();\n\nconst isLocalLocation =\n  /санкт-петербург|мурино/.test(location);\n\nconst requiresLocalPresence = [\n  \"office\",\n  \"hybrid\",\n  \"field\",\n].includes(workFormat);\n\nif (requiresLocalPresence && !isLocalLocation) {\n  reasons.push(\"location_format_mismatch\");\n}\n\nconst titleBlockers = [\n  {\n    code: \"sales_role\",\n    pattern:\n      /менеджер по продажам|руководитель продаж|sales manager|account manager|аккаунт-менеджер|business development|менеджер по работе с партнерами|менеджер по работе с клиентами/i,\n  },\n  {\n    code: \"marketing_seo_role\",\n    pattern:\n      /маркетолог|media buyer|медиабайер|контекстн(?:ая|ой)\\s+реклам|seo[- /]|seo специалист|seo-специалист|seo developer|community manager|контент[- ]менеджер|руководитель.*\\bpr\\b/i,\n  },\n  {\n    code: \"assistant_role\",\n    pattern:\n      /ассистент руководителя|помощник руководителя|бизнес-ассистент|личный ассистент/i,\n  },\n  {\n    code: \"project_product_role\",\n    pattern:\n      /project manager|product manager|project\\/product manager|руководитель проектов|менеджер проектов|проджект[- ]менеджер|продакт[- ]менеджер/i,\n  },\n  {\n    code: \"recruiting_role\",\n    pattern:\n      /рекрутер|hr[- ]менеджер|hr manager|менеджер по персоналу|специалист по подбору персонала/i,\n  },\n  {\n    code: \"qa_testing_role\",\n    pattern:\n      /\\baqa\\b|\\bqa\\b|quality assurance|automation qa|qa automation|тестировщик|тестировани[ея]|автоматизатор тестирования|инженер по автоматизации тестирования|sdet/i,\n  },\n  {\n    code: \"ml_ds_role\",\n    pattern:\n      /machine learning|\\bml[- /]|ml engineer|ml-инженер|ml\\/ds|data scientist|data science|ds инженер|инженер машинного обучения|разработчик искусственного интеллекта|разработчик рекомендательной системы/i,\n  },\n  {\n    code: \"pure_software_development\",\n    pattern:\n      /fullstack|full-stack|frontend|front-end|backend|back-end|php[- ]разработчик|java[- ]разработчик|golang[- ]разработчик|разработчик c\\+\\+|data engineer|data-инженер|dwh engineer/i,\n  },\n  {\n    code: \"industrial_automation_role\",\n    pattern:\n      /асу\\s*тп|асутп|кипиа|кип и а|\\bplc\\b|плк|\\bscada\\b|автоматизаци[яи] технологических процессов|автоматизаци[яи] производства|инженер пнр/i,\n  },\n  {\n    code: \"industrial_engineering_role\",\n    pattern:\n      /инженер-технолог|ведущий инженер-технолог|инженер-конструктор|инженер-схемотехник|инженер-испытатель|монтажник рэа|электрооборудовани[юя].*автоматизаци|инженер-проектировщик.*эом|инженер производственного склада/i,\n  },\n  {\n    code: \"one_c_development_role\",\n    pattern:\n      /программист\\s*1с|разработчик\\s*1с|1с[- ]разработчик/i,\n  },\n  {\n    code: \"non_it_role\",\n    pattern:\n      /курьер|водитель|кладовщик|комплектовщик|повар|продавец-консультант|ведущий юрист|менеджер по логистике|методолог образовательных программ|эксплуатаци[яи] и ремонт.*помещени/i,\n  },\n  {\n    code: \"computer_club_role\",\n    pattern:\n      /администратор компьютерного клуба/i,\n  },\n  {\n    code: \"traffic_arbitrage_role\",\n    pattern:\n      /traffic arbitrage|traffic buyer|арбитраж трафика/i,\n  },\n];\n\nfor (const blocker of titleBlockers) {\n  if (blocker.pattern.test(title)) {\n    reasons.push(blocker.code);\n  }\n}\n\nif (!vacancy.vacancy_id) {\n  reasons.push(\"missing_vacancy_id\");\n}\n\nif (!vacancy.url) {\n  reasons.push(\"missing_url\");\n}\n\nif (!title) {\n  reasons.push(\"missing_title\");\n}\n\nif (!description || description.length < 200) {\n  reasons.push(\"insufficient_description\");\n}\n\nconst parseFailureReasons = new Set([\n  \"missing_vacancy_id\",\n  \"missing_url\",\n  \"missing_title\",\n  \"insufficient_description\",\n]);\n\nconst hasParseFailure = reasons.some((reason) =>\n  parseFailureReasons.has(reason)\n);\n\nif (hasParseFailure) {\n  vacancy.status = \"parse_failed\";\n} else if (reasons.length > 0) {\n  vacancy.status = \"filtered\";\n} else {\n  vacancy.status = \"found\";\n}\n\nvacancy.filter_reason = reasons.join(\",\");\nvacancy.updated_at = new Date().toISOString();\n\nif (vacancy.status === \"parse_failed\" && !vacancy.last_error) {\n  vacancy.last_error =\n    \"Required vacancy data is missing or incomplete\";\n}\n\nreturn {\n  json: vacancy,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        304
+      ],
+      "id": "c93b0ec3-2285-4b6e-b748-6970bbf73310",
+      "name": "Apply Hard Filters"
     }
   ],
   "pinData": {},
@@ -523,7 +556,7 @@
       "main": [
         [
           {
-            "node": "Wait Before Detail Request",
+            "node": "Limit New Vacancies",
             "type": "main",
             "index": 0
           }
@@ -545,6 +578,28 @@
       "main": [
         [
           {
+            "node": "Apply Hard Filters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit New Vacancies": {
+      "main": [
+        [
+          {
+            "node": "Wait Before Detail Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Hard Filters": {
+      "main": [
+        [
+          {
             "node": "Save Vacancy",
             "type": "main",
             "index": 0
@@ -563,7 +618,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "b24a397c-5e15-4a04-9fa5-dceedff1a2c7",
+  "versionId": "639fb77b-10b8-4110-8de8-1f79f8deef10",
   "meta": {
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
   },
