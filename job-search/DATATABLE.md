@@ -18,7 +18,7 @@ job_vacancies
 | company | String | Название работодателя. |
 | salary | String | Зарплата в исходном нормализованном представлении. |
 | location | String | Регион или город. |
-| work_format | String | Удаленная, офисная или гибридная работа. |
+| work_format | String | Нормализованный формат: remote, hybrid, office, field или unspecified. |
 | experience | String | Требуемый опыт. |
 | published_at | String | Дата публикации в контролируемом формате ISO 8601 UTC, если извлечена. |
 | first_seen_at | String | Время первого обнаружения в формате ISO 8601 UTC. |

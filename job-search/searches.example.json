@@ -1,23 +1,82 @@
 [
   {
-    "name": "ai-automation",
-    "enabled": false,
-    "text": "AI automation engineer",
-    "area": "1",
-    "pages": 1
+    "name": "ai-n8n-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "n8n",
+    "area": "2",
+    "schedule": "",
+    "pages": 1,
+    "search_field": "description"
   },
   {
-    "name": "n8n-integrations",
-    "enabled": false,
-    "text": "n8n интеграции",
-    "area": "1",
-    "pages": 1
+    "name": "ai-n8n-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "n8n",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 1,
+    "search_field": "description"
   },
   {
-    "name": "system-administrator",
-    "enabled": false,
+    "name": "ai-automation-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "инженер по автоматизации",
+    "area": "2",
+    "schedule": "",
+    "pages": 1,
+    "search_field": "name"
+  },
+  {
+    "name": "ai-automation-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "инженер по автоматизации",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 1,
+    "search_field": "name"
+  },
+  {
+    "name": "it-engineer-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "IT-инженер",
+    "area": "2",
+    "schedule": "",
+    "pages": 1,
+    "search_field": "name"
+  },
+  {
+    "name": "it-engineer-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "IT-инженер",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 1,
+    "search_field": "name"
+  },
+  {
+    "name": "sysadmin-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
     "text": "системный администратор",
-    "area": "1",
-    "pages": 1
+    "area": "2",
+    "schedule": "",
+    "pages": 1,
+    "search_field": "name"
+  },
+  {
+    "name": "sysadmin-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "системный администратор",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 1,
+    "search_field": "name"
   }
 ]
