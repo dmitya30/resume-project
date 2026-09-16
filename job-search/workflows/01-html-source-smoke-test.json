@@ -9,12 +9,12 @@
       "typeVersion": 1,
       "position": [
         224,
-        304
+        288
       ]
     },
     {
       "parameters": {
-        "jsCode": "const searches = [\n  {\n    name: \"ai-n8n-spb\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"n8n\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"description\",\n  },\n  {\n    name: \"ai-n8n-remote\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"n8n\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"description\",\n  },\n  {\n    name: \"ai-automation-spb\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"инженер по автоматизации\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"ai-automation-remote\",\n    enabled: true,\n    target_resume: \"ai_automation\",\n    text: \"инженер по автоматизации\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"it-engineer-spb\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"IT-инженер\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"it-engineer-remote\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"IT-инженер\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"sysadmin-spb\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"системный администратор\",\n    area: \"2\",\n    schedule: \"\",\n    pages: 1,\n    search_field: \"name\",\n  },\n  {\n    name: \"sysadmin-remote\",\n    enabled: true,\n    target_resume: \"it_infrastructure\",\n    text: \"системный администратор\",\n    area: \"113\",\n    schedule: \"remote\",\n    pages: 1,\n    search_field: \"name\",\n  },\n];\n\nconst output = [];\n\nfor (const search of searches) {\n  if (!search.enabled) continue;\n\n  const pages = Math.max(1, Number(search.pages || 1));\n\n  for (let page = 0; page < pages; page += 1) {\n    const queryParams = {\n      text: search.text,\n      area: String(search.area),\n      order_by: \"publication_time\",\n      page: String(page),\n    };\n\n    if (search.schedule) {\n      queryParams.schedule = search.schedule;\n    }\n\n    if (search.search_field) {\n      queryParams.search_field = search.search_field;\n    }\n\n    const queryString = Object.entries(queryParams)\n      .map(([key, value]) =>\n        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`\n      )\n      .join(\"&\");\n\n    output.push({\n      json: {\n        source_query: search.name,\n        target_resume: search.target_resume,\n        search_text: search.text,\n        area: String(search.area),\n        schedule: search.schedule,\n        page,\n        url: `https://hh.ru/search/vacancy?${queryString}`,\n      },\n    });\n  }\n}\n\nif (output.length === 0) {\n  throw new Error(\"No enabled search configurations\");\n}\n\nreturn output;\n"
+        "jsCode": "const searchTemplates = [\n  {\n    key: 'ai-n8n',\n    target_resume: 'ai_automation',\n    text: 'n8n',\n    search_field: 'description',\n  },\n  {\n    key: 'ai-automation',\n    target_resume: 'ai_automation',\n    text: 'инженер по автоматизации',\n    search_field: 'name',\n  },\n  {\n    key: 'ai-integration-engineer',\n    target_resume: 'ai_automation',\n    text: 'инженер по интеграциям',\n    search_field: 'name',\n  },\n  {\n    key: 'ai-integration-specialist',\n    target_resume: 'ai_automation',\n    text: 'специалист по интеграциям',\n    search_field: 'name',\n  },\n  {\n    key: 'ai-business-process-automation',\n    target_resume: 'ai_automation',\n    text: 'автоматизация бизнес-процессов',\n    search_field: 'description',\n  },\n  {\n    key: 'ai-llm',\n    target_resume: 'ai_automation',\n    text: 'LLM',\n    search_field: 'description',\n  },\n  {\n    key: 'it-engineer',\n    target_resume: 'it_infrastructure',\n    text: 'IT-инженер',\n    search_field: 'name',\n  },\n  {\n    key: 'it-system-administrator',\n    target_resume: 'it_infrastructure',\n    text: 'системный администратор',\n    search_field: 'name',\n  },\n  {\n    key: 'it-system-engineer',\n    target_resume: 'it_infrastructure',\n    text: 'системный инженер',\n    search_field: 'name',\n  },\n  {\n    key: 'it-support-engineer',\n    target_resume: 'it_infrastructure',\n    text: 'инженер технической поддержки',\n    search_field: 'name',\n  },\n  {\n    key: 'it-support-specialist',\n    target_resume: 'it_infrastructure',\n    text: 'специалист технической поддержки',\n    search_field: 'name',\n  },\n  {\n    key: 'it-network-engineer',\n    target_resume: 'it_infrastructure',\n    text: 'сетевой инженер',\n    search_field: 'name',\n  },\n];\n\nconst scopes = [\n  {\n    key: 'spb',\n    area: '2',\n    schedule: '',\n  },\n  {\n    key: 'remote',\n    area: '113',\n    schedule: 'remote',\n  },\n];\n\nconst pagesPerSearch = 4;\nconst output = [];\n\nfor (const template of searchTemplates) {\n  for (const scope of scopes) {\n    for (let page = 0; page < pagesPerSearch; page += 1) {\n      const queryParams = {\n        text: template.text,\n        area: scope.area,\n        order_by: 'publication_time',\n        page: String(page),\n      };\n\n      if (scope.schedule) {\n        queryParams.schedule = scope.schedule;\n      }\n\n      if (template.search_field) {\n        queryParams.search_field = template.search_field;\n      }\n\n      const queryString = Object.entries(queryParams)\n        .map(([key, value]) => {\n          return `${encodeURIComponent(key)}=${encodeURIComponent(\n            String(value)\n          )}`;\n        })\n        .join('&');\n\n      output.push({\n        json: {\n          source_query: `${template.key}-${scope.key}`,\n          target_resume: template.target_resume,\n          search_text: template.text,\n          area: scope.area,\n          schedule: scope.schedule,\n          page,\n          url: `https://hh.ru/search/vacancy?${queryString}`,\n        },\n      });\n    }\n  }\n}\n\nreturn output;\n"
       },
       "id": "4b1036b3-3a6b-45b0-b25c-4f94ba303cf6",
       "name": "Generate Search URLs",
@@ -22,7 +22,7 @@
       "typeVersion": 2,
       "position": [
         368,
-        272
+        224
       ]
     },
     {
@@ -66,7 +66,7 @@
       "typeVersion": 4.2,
       "position": [
         512,
-        304
+        256
       ]
     },
     {
@@ -79,7 +79,7 @@
       "typeVersion": 2,
       "position": [
         656,
-        272
+        208
       ]
     },
     {
@@ -92,7 +92,7 @@
       "typeVersion": 1.1,
       "position": [
         1088,
-        304
+        256
       ],
       "webhookId": "08f0c4f0-c8a8-4d4a-a48f-000000000006"
     },
@@ -137,7 +137,7 @@
       "typeVersion": 4.2,
       "position": [
         1216,
-        272
+        224
       ]
     },
     {
@@ -151,7 +151,7 @@
       "typeVersion": 2,
       "position": [
         1360,
-        304
+        256
       ]
     },
     {
@@ -178,7 +178,7 @@
       "typeVersion": 1.1,
       "position": [
         800,
-        304
+        256
       ],
       "id": "89b55902-dfae-4ff1-af4a-06234cb7b8bd",
       "name": "Only New Vacancies"
@@ -437,7 +437,7 @@
       "typeVersion": 1.1,
       "position": [
         1776,
-        272
+        224
       ],
       "id": "40e8207d-20b0-4b91-9175-bca87fb24981",
       "name": "Save Vacancy"
@@ -451,20 +451,20 @@
       "typeVersion": 2,
       "position": [
         1504,
-        272
+        224
       ],
       "id": "9b8c42d5-04fc-453d-bea3-a730dd9a34ab",
       "name": "Prepare Data Table Row"
     },
     {
       "parameters": {
-        "jsCode": "const maxNewVacanciesPerRun = 40;\nconst items = $input.all();\n\nreturn items.slice(0, maxNewVacanciesPerRun);\n"
+        "jsCode": "const maxNewVacanciesPerRun = 40;\n\nreturn $input.all().slice(0, maxNewVacanciesPerRun);\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         944,
-        272
+        224
       ],
       "id": "25be44b9-7924-4801-bd72-bd781cd5251a",
       "name": "Limit New Vacancies"
@@ -478,10 +478,23 @@
       "typeVersion": 2,
       "position": [
         1648,
-        304
+        256
       ],
       "id": "c93b0ec3-2285-4b6e-b748-6970bbf73310",
       "name": "Apply Hard Filters"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        144
+      ],
+      "id": "4a717cea-8ef3-4753-bba5-e09068387020",
+      "name": "When Called By Orchestrator"
     }
   ],
   "pinData": {},
@@ -606,6 +619,17 @@
           }
         ]
       ]
+    },
+    "When Called By Orchestrator": {
+      "main": [
+        [
+          {
+            "node": "Generate Search URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -618,7 +642,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "639fb77b-10b8-4110-8de8-1f79f8deef10",
+  "versionId": "423c9ef4-70c0-4ee7-a7bb-b5e3136e9c26",
   "meta": {
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
   },

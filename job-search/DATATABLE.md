@@ -26,7 +26,7 @@ job_vacancies
 | source_query | String | Имя поисковой конфигурации. |
 | description_text | String | Очищенное описание вакансии. |
 | content_hash | String | Хеш нормализованного содержимого. |
-| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, letter_ready, letter_review или sent_to_telegram. |
+| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, application_blocked, letter_ready, letter_review или sent_to_telegram. |
 | filter_reason | String | Причина отклонения жестким фильтром. |
 | score | Number | Итоговая оценка соответствия. |
 | recommended_resume | String | Рекомендованный вариант резюме. |
@@ -72,3 +72,17 @@ error
 - `sent_to_telegram` - вакансия и сопроводительное письмо успешно доставлены владельцу в Telegram.
 - При ошибке Telegram исходный статус `letter_ready` или `letter_review` сохраняется, а безопасное описание ошибки записывается в `last_error`.
 - `telegram_message_id` заполняется только после подтвержденной успешной отправки.
+
+
+## Терминальный статус application_blocked
+
+`application_blocked` означает, что вакансия прошла извлечение и scoring, но не должна передаваться в генерацию сопроводительного письма из-за объективного blocker:
+
+- известная верхняя граница зарплаты ниже минимально допустимой;
+- неподходящая география для офиса, гибрида или выездной работы;
+- вакансия архивирована или недоступна;
+- невозможно выбрать допустимый вариант резюме.
+
+Низкий score, `decision=reject`, `critical_gap` или отсутствие отдельной технологии сами по себе не являются основанием для `application_blocked`.
+
+Статус терминальный и не должен повторно обрабатываться scheduled-конвейером.

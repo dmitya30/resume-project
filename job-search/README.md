@@ -606,3 +606,105 @@ Workflow:
 Workflow не отправляет отклик на hh.ru. Пользователь самостоятельно проверяет сообщение, выбирает указанное резюме и отправляет отклик.
 
 Автоматический запуск по расписанию будет добавлен отдельным workflow-оркестратором после завершения отладки workflow 01 и 03-05.
+
+
+## Production-оркестратор
+
+Production-оркестратор хранится в:
+
+```text
+workflows/00-scheduled-orchestrator.json
+```
+
+Внутреннее имя:
+
+```text
+Job Search - 00 Scheduled Orchestrator
+```
+
+Цепочка:
+
+```text
+Manual Trigger / Schedule Trigger
+-> Orchestrator Settings
+-> Execute Workflow 01 - Collect Vacancies
+-> Execute Workflow 03 - Score Vacancies
+-> Execute Workflow 04 - Generate Letters
+-> Execute Workflow 05 - Send To Telegram
+```
+
+Дочерние workflow не передают друг другу вакансии. Каждый этап самостоятельно читает свою очередь из Data Table:
+
+- workflow 01 создаёт новые записи;
+- workflow 03 читает все записи `found`;
+- workflow 04 читает все записи `scored`;
+- workflow 05 читает все записи `letter_ready` и `letter_review`.
+
+На каждой Execute Sub-workflow ноде включены:
+
+```text
+Execute Once
+Always Output Data
+Wait for Sub-Workflow Completion
+```
+
+`On Error` установлен в `Stop Workflow`. Отдельный Error Handler отправляет владельцу уведомление в Telegram о настоящих ошибках выполнения.
+
+### Расписание
+
+Timezone workflow:
+
+```text
+Europe/Moscow
+```
+
+Cron:
+
+```text
+0 0 4,10,16 * * *
+```
+
+Запуски происходят в 04:00, 10:00 и 16:00 по Москве, что соответствует 08:00, 14:00 и 20:00 в Алтайском крае.
+
+Workflow с Schedule Trigger должен быть опубликован и активирован после ручной проверки.
+
+### Стратегия пропускной способности
+
+Workflow 01 добавляет не более 40 новых вакансий за запуск. Расширенная поисковая конфигурация использует несколько формулировок для двух направлений, Санкт-Петербург и удалённую работу, а также несколько страниц выдачи.
+
+Последующие workflow не используют искусственный batch limit:
+
+- workflow 03 обрабатывает все `found`;
+- workflow 04 обрабатывает все `scored`;
+- workflow 05 отправляет все `letter_ready` и `letter_review`.
+
+Это предотвращает накопление устаревающих вакансий между scheduled-запусками.
+
+### Первый чистый запуск
+
+Первый успешный полный запуск оркестратора обработал 40 новых вакансий:
+
+```text
+workflow 01: 40 items, около 553 секунд
+workflow 03: 18 items, около 380 секунд
+workflow 04: 13 items, около 159 секунд
+workflow 05: 13 items, около 30 секунд
+```
+
+Итог:
+
+```text
+filtered: 22
+application_blocked: 5
+sent_to_telegram: 13
+```
+
+В Telegram успешно доставлены 13 вакансий с выбранным резюме и сопроводительным письмом.
+
+### Исправленный инцидент с размножением items
+
+При первом ошибочном запуске workflow 01 передал оркестратору 40 items. Нода вызова workflow 03 использовала `Run once with all items`, но не имела `Execute Once`. В результате дочерний workflow получил 40 управляющих items и многократно прочитал одну очередь Data Table.
+
+До остановки выполнения было обработано около 720 повторяющихся items.
+
+Причина устранена включением `Execute Once` на всех Execute Sub-workflow нодах. В дочерний workflow теперь передаётся один технический item, а рабочие данные читаются из Data Table.

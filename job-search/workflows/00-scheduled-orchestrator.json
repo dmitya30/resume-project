@@ -1,0 +1,263 @@
+{
+  "name": "Job Search - 00 Scheduled Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 4,10,16 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        208
+      ],
+      "id": "2d5e36fe-a60e-46ab-9f29-a959a6db0d5d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      run_id: $execution.id,\n      started_at: new Date().toISOString(),\n      trigger_mode: $execution.mode,\n      pipeline: 'job_search',\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        144
+      ],
+      "id": "430e2039-06a7-4b1d-9e75-25a167d3cdfa",
+      "name": "Orchestrator Settings"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yON4EeVULOTnm4hg",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yON4EeVULOTnm4hg",
+          "cachedResultName": "Job Search - 01 HTML Source Smoke Test"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        64
+      ],
+      "id": "2ad675ba-9dcb-4919-8ebc-c74676514c0c",
+      "name": "Execute Workflow 01 - Collect Vacancies",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6ZPLn5cQ3IQjnLgF",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6ZPLn5cQ3IQjnLgF",
+          "cachedResultName": "Job Search - 03 Score Found Vacancies"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        144
+      ],
+      "id": "72a0ad53-9795-4e85-868b-67db5094974f",
+      "name": "Execute Workflow 03 - Score Vacancies",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "FHgbUF4nG4F15uVV",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/FHgbUF4nG4F15uVV",
+          "cachedResultName": "Job Search - 04 Generate Cover Letters"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        64
+      ],
+      "id": "f6982067-ebba-45df-918e-d4353b181993",
+      "name": "Execute Workflow 04 - Generate Letters",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QfWNYWLxwExW2f8N",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/QfWNYWLxwExW2f8N",
+          "cachedResultName": "Job Search - 05 Send Applications to Telegram"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        864,
+        144
+      ],
+      "id": "7887c29b-d52d-4964-953f-7994b74eab13",
+      "name": "Call 'Job Search - 05 Send Applications to Telegram'",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        80
+      ],
+      "id": "815ba3dd-7b31-48ea-b15a-3cd4bfd6a7d6",
+      "name": "Manual Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orchestrator Settings": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow 01 - Collect Vacancies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow 01 - Collect Vacancies": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow 03 - Score Vacancies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow 03 - Score Vacancies": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow 04 - Generate Letters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow 04 - Generate Letters": {
+      "main": [
+        [
+          {
+            "node": "Call 'Job Search - 05 Send Applications to Telegram'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "0e7713c2-0ad2-41ff-b471-bfb712898218",
+  "meta": {
+    "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
+  },
+  "nodeGroups": [],
+  "id": "ED6lotnsSRRzuiUB",
+  "tags": []
+}

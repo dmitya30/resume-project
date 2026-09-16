@@ -146,3 +146,16 @@ Use these evidence markers in internal working documents:
 - Do not merge Code nodes merely because both contain JavaScript when another meaningful node type separates them.
 - Prefer a controlled JavaScript loop with explicit delays for sequential API calls when `Loop Over Items` is unnecessary or unreliable.
 - Before a substantial refactor of an n8n workflow that exists only in the UI, export and commit a checkpoint version.
+
+
+## n8n orchestration and queue-draining rules
+
+- In the job-search orchestrator, child workflows exchange control only. They must not pass vacancy items between stages because each child workflow reads its own queue from the shared Data Table.
+- Every Execute Sub-workflow node in the orchestrator must have `Execute Once` enabled. `Run once with all items` alone is insufficient because it passes all incoming items into one child execution.
+- Keep `Always Output Data` enabled so an empty queue does not interrupt normal orchestration.
+- Keep `On Error: Stop Workflow` for genuine execution failures; an empty child result is not an error.
+- Limit the number of newly added vacancies only at the collection stage. Downstream workflows must process all items in their current working queue.
+- After a successful orchestration run, the working statuses `found`, `scored`, `letter_ready`, and `letter_review` should be empty.
+- Vacancies excluded by objective application blockers must receive the terminal status `application_blocked` instead of remaining in `scored`.
+- Do not clear or reset the Data Table after ordinary failures. Resume processing from persisted statuses unless a clean test run is explicitly required.
+- Before activating a Schedule Trigger, complete one successful manual orchestration run.

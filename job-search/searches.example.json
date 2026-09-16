@@ -6,7 +6,7 @@
     "text": "n8n",
     "area": "2",
     "schedule": "",
-    "pages": 1,
+    "pages": 4,
     "search_field": "description"
   },
   {
@@ -16,7 +16,7 @@
     "text": "n8n",
     "area": "113",
     "schedule": "remote",
-    "pages": 1,
+    "pages": 4,
     "search_field": "description"
   },
   {
@@ -26,7 +26,7 @@
     "text": "инженер по автоматизации",
     "area": "2",
     "schedule": "",
-    "pages": 1,
+    "pages": 4,
     "search_field": "name"
   },
   {
@@ -36,8 +36,88 @@
     "text": "инженер по автоматизации",
     "area": "113",
     "schedule": "remote",
-    "pages": 1,
+    "pages": 4,
     "search_field": "name"
+  },
+  {
+    "name": "ai-integration-engineer-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "инженер по интеграциям",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "ai-integration-engineer-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "инженер по интеграциям",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "ai-integration-specialist-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "специалист по интеграциям",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "ai-integration-specialist-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "специалист по интеграциям",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "ai-business-process-automation-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "автоматизация бизнес-процессов",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "description"
+  },
+  {
+    "name": "ai-business-process-automation-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "автоматизация бизнес-процессов",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "description"
+  },
+  {
+    "name": "ai-llm-spb",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "LLM",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "description"
+  },
+  {
+    "name": "ai-llm-remote",
+    "enabled": true,
+    "target_resume": "ai_automation",
+    "text": "LLM",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "description"
   },
   {
     "name": "it-engineer-spb",
@@ -46,7 +126,7 @@
     "text": "IT-инженер",
     "area": "2",
     "schedule": "",
-    "pages": 1,
+    "pages": 4,
     "search_field": "name"
   },
   {
@@ -56,27 +136,107 @@
     "text": "IT-инженер",
     "area": "113",
     "schedule": "remote",
-    "pages": 1,
+    "pages": 4,
     "search_field": "name"
   },
   {
-    "name": "sysadmin-spb",
+    "name": "it-system-administrator-spb",
     "enabled": true,
     "target_resume": "it_infrastructure",
     "text": "системный администратор",
     "area": "2",
     "schedule": "",
-    "pages": 1,
+    "pages": 4,
     "search_field": "name"
   },
   {
-    "name": "sysadmin-remote",
+    "name": "it-system-administrator-remote",
     "enabled": true,
     "target_resume": "it_infrastructure",
     "text": "системный администратор",
     "area": "113",
     "schedule": "remote",
-    "pages": 1,
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-system-engineer-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "системный инженер",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-system-engineer-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "системный инженер",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-support-engineer-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "инженер технической поддержки",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-support-engineer-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "инженер технической поддержки",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-support-specialist-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "специалист технической поддержки",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-support-specialist-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "специалист технической поддержки",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-network-engineer-spb",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "сетевой инженер",
+    "area": "2",
+    "schedule": "",
+    "pages": 4,
+    "search_field": "name"
+  },
+  {
+    "name": "it-network-engineer-remote",
+    "enabled": true,
+    "target_resume": "it_infrastructure",
+    "text": "сетевой инженер",
+    "area": "113",
+    "schedule": "remote",
+    "pages": 4,
     "search_field": "name"
   }
 ]
