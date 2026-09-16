@@ -133,3 +133,16 @@ Use these evidence markers in internal working documents:
 - Do not use Unicode em dashes or en dashes. Use the ASCII hyphen-minus: `-`.
 - Do not use Unicode bullets, arrows, non-breaking spaces, curly quotes, emoji, or decorative symbols. Use `-`, `->`, ordinary spaces, and `«»` instead.
 - Before delivering public text, check and normalize its punctuation according to this rule.
+
+## Operational efficiency and workflow implementation
+
+- Every durable project rule established by the user must be recorded in `AGENTS.md`. Subsystem documentation may clarify these rules but must not be their only source.
+- Do not over-research, over-verify, or repeatedly recheck work that the user has explicitly confirmed as completed.
+- Perform only checks needed to prevent a critical error or checks explicitly requested by the user.
+- Prefer forward progress over exhaustive verification when the remaining uncertainty is non-critical and reversible.
+- Do not reconstruct exact workflow code from compressed dialogue or descriptions. Read the current exported workflow JSON before proposing line-level changes.
+- For n8n integrations, prefer Code nodes when they provide materially better control than native nodes.
+- Do not create long chains of consecutive Code nodes in production without a clear reason. During development, multiple Code nodes are acceptable for debugging; after validation, consolidate consecutive Code nodes when this reduces n8n execution and database overhead without making the code unsafe to maintain.
+- Do not merge Code nodes merely because both contain JavaScript when another meaningful node type separates them.
+- Prefer a controlled JavaScript loop with explicit delays for sequential API calls when `Loop Over Items` is unnecessary or unreliable.
+- Before a substantial refactor of an n8n workflow that exists only in the UI, export and commit a checkpoint version.

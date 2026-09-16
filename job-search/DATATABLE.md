@@ -26,7 +26,7 @@ job_vacancies
 | source_query | String | Имя поисковой конфигурации. |
 | description_text | String | Очищенное описание вакансии. |
 | content_hash | String | Хеш нормализованного содержимого. |
-| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, letter_ready или letter_review. |
+| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, letter_ready, letter_review или sent_to_telegram. |
 | filter_reason | String | Причина отклонения жестким фильтром. |
 | score | Number | Итоговая оценка соответствия. |
 | recommended_resume | String | Рекомендованный вариант резюме. |
@@ -63,3 +63,12 @@ error
 - analysis_json хранится как сериализованная JSON-строка.
 - last_error не должен содержать credentials, cookies или полные HTTP-заголовки.
 - После создания таблицы ее фактическое имя нужно указать в workflow.
+
+
+## Статусы доставки в Telegram
+
+- `letter_ready` - письмо прошло автоматическую проверку и готово к ручному использованию при отклике.
+- `letter_review` - письмо создано, но требует дополнительной проверки перед откликом.
+- `sent_to_telegram` - вакансия и сопроводительное письмо успешно доставлены владельцу в Telegram.
+- При ошибке Telegram исходный статус `letter_ready` или `letter_review` сохраняется, а безопасное описание ошибки записывается в `last_error`.
+- `telegram_message_id` заполняется только после подтвержденной успешной отправки.

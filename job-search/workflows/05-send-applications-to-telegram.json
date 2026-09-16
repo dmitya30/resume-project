@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "jsCode": "return [\n  {\n    json: {\n      send_status: 'letter_review',\n      queue_label: 'ТРЕБУЕТ ПРОВЕРКИ',\n      batch_size: 10,\n    },\n  },\n];\n"
+        "jsCode": "return [\n  {\n    json: {\n      batch_size: 10,\n      delay_ms: 2000,\n      retry_attempts: 3,\n      retry_delay_ms: 5000,\n    },\n  },\n];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -35,12 +35,15 @@
           "cachedResultName": "job_vacancies",
           "cachedResultUrl": "/projects/sIo9PqXeNC43L6eV/datatables/BBkNn35THhjK8u8i"
         },
-        "matchType": "allConditions",
         "filters": {
           "conditions": [
             {
               "keyName": "status",
-              "keyValue": "={{ $json.send_status }}"
+              "keyValue": "=letter_ready"
+            },
+            {
+              "keyName": "status",
+              "keyValue": "letter_review"
             }
           ]
         },
@@ -54,47 +57,6 @@
       ],
       "id": "4c2103c5-811f-43ac-95f3-4e14a491d855",
       "name": "Get Pending Telegram Letters"
-    },
-    {
-      "parameters": {
-        "jsCode": "const settings = $('Telegram Settings').first().json;\nconst batchSize = Math.max(\n  1,\n  Number(settings.batch_size || 1)\n);\n\nfunction parseObject(value) {\n  if (value && typeof value === 'object') {\n    return value;\n  }\n\n  if (typeof value !== 'string' || !value.trim()) {\n    return {};\n  }\n\n  try {\n    return JSON.parse(value);\n  } catch {\n    return {};\n  }\n}\n\nconst rows = $input.all()\n  .map((item) => {\n    const vacancy = { ...item.json };\n    const analysis = parseObject(vacancy.analysis_json);\n\n    const evaluation =\n      analysis.evaluation &&\n      typeof analysis.evaluation === 'object'\n        ? analysis.evaluation\n        : analysis;\n\n    const generation =\n      analysis.cover_letter_generation &&\n      typeof analysis.cover_letter_generation === 'object'\n        ? analysis.cover_letter_generation\n        : {};\n\n    const score = Number.isFinite(Number(vacancy.score))\n      ? Number(vacancy.score)\n      : Number(evaluation.score || 0);\n\n    const decision = String(\n      evaluation.decision ||\n        (score >= 75\n          ? 'recommend'\n          : score >= 60\n            ? 'review'\n            : 'reject')\n    );\n\n    vacancy.telegram_queue_label = String(\n      settings.queue_label || ''\n    );\n    vacancy.telegram_score = score;\n    vacancy.telegram_decision = decision;\n    vacancy.telegram_warnings = Array.isArray(\n      generation.warnings\n    )\n      ? generation.warnings\n      : [];\n\n    return vacancy;\n  })\n  .filter((vacancy) => {\n    return (\n      typeof vacancy.cover_letter === 'string' &&\n      vacancy.cover_letter.trim() &&\n      !String(vacancy.telegram_message_id || '').trim()\n    );\n  })\n  .sort((a, b) => {\n    if (b.telegram_score !== a.telegram_score) {\n      return b.telegram_score - a.telegram_score;\n    }\n\n    return String(b.published_at || '').localeCompare(\n      String(a.published_at || '')\n    );\n  })\n  .slice(0, batchSize);\n\nreturn rows.map((vacancy) => ({\n  json: vacancy,\n}));\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        480,
-        0
-      ],
-      "id": "afb489b9-d905-4b4d-b4a2-bcc6c7c96209",
-      "name": "Select Telegram Batch"
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "const vacancy = { ...$json };\n\nfunction clean(value) {\n  return String(value || '')\n    .replace(/\\u00a0/g, ' ')\n    .replace(/[\\u2013\\u2014\\u2212]/g, '-')\n    .replace(/[\\u2018\\u2019]/g, \"'\")\n    .replace(/[\\u201c\\u201d]/g, '\"')\n    .replace(/\\u2022/g, '-')\n    .replace(/\\u2192/g, '->')\n    .replace(/[ \\t]+/g, ' ')\n    .replace(/ *\\n */g, '\\n')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\n\nconst warnings = Array.isArray(vacancy.telegram_warnings)\n  ? vacancy.telegram_warnings\n      .map(clean)\n      .filter(Boolean)\n      .slice(0, 5)\n  : [];\n\nconst warningBlock =\n  warnings.length > 0\n    ? [\n        '',\n        'ПРЕДУПРЕЖДЕНИЯ:',\n        ...warnings.map((warning) => `- ${warning}`),\n      ].join('\\n')\n    : '';\n\nconst message = [\n  clean(vacancy.telegram_queue_label),\n  '',\n  clean(vacancy.title),\n  clean(vacancy.company),\n  '',\n  `Score: ${Number(vacancy.telegram_score || 0)}`,\n  `Decision: ${clean(vacancy.telegram_decision)}`,\n  `Резюме: ${clean(vacancy.recommended_resume)}`,\n  `Зарплата: ${clean(vacancy.salary || 'не указана')}`,\n  `Локация: ${clean(vacancy.location || 'не указана')}`,\n  `Формат: ${clean(vacancy.work_format || 'unspecified')}`,\n  warningBlock,\n  '',\n  `Вакансия: ${clean(vacancy.url)}`,\n  '',\n  'СОПРОВОДИТЕЛЬНОЕ ПИСЬМО:',\n  '',\n  clean(vacancy.cover_letter),\n].filter((line, index, array) => {\n  if (line !== '') {\n    return true;\n  }\n\n  return index === 0 || array[index - 1] !== '';\n}).join('\\n');\n\nif (!message.trim()) {\n  throw new Error(\n    `Empty Telegram message for vacancy ${\n      vacancy.vacancy_id || 'unknown'\n    }`\n  );\n}\n\nif (message.length > 3900) {\n  throw new Error(\n    `Telegram message is too long for vacancy ${\n      vacancy.vacancy_id || 'unknown'\n    }: ${message.length} characters`\n  );\n}\n\nvacancy.telegram_text = message;\n\nreturn {\n  json: vacancy,\n};\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        672,
-        0
-      ],
-      "id": "92f61ce6-2059-49cd-980b-4a6d1f9a356c",
-      "name": "Build Telegram Message"
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "const source = {\n  ...$('Build Telegram Message').item.json,\n};\n\nconst telegramResponse = { ...$json };\n\nconst messageId =\n  telegramResponse.message_id ??\n  telegramResponse.result?.message_id ??\n  telegramResponse.messageId ??\n  '';\n\nif (!String(messageId).trim()) {\n  throw new Error(\n    `Telegram message_id is missing for vacancy ${\n      source.vacancy_id || 'unknown'\n    }`\n  );\n}\n\nsource.telegram_message_id = String(messageId);\nsource.telegram_previous_status = String(source.status || '');\nsource.status = 'sent_to_telegram';\nsource.updated_at = $now.toUTC().toISO();\nsource.last_error = '';\n\ndelete source.telegram_text;\ndelete source.telegram_queue_label;\ndelete source.telegram_score;\ndelete source.telegram_decision;\ndelete source.telegram_warnings;\n\nreturn {\n  json: source,\n};\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1040,
-        0
-      ],
-      "id": "6cf2efe4-4d65-4b13-8ab7-914a0e488e53",
-      "name": "Prepare Telegram Update"
     },
     {
       "parameters": {
@@ -354,7 +316,7 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1216,
+        656,
         0
       ],
       "id": "aee3cfcd-cc9c-4f16-8f53-6bace2e3895c",
@@ -362,12 +324,12 @@
     },
     {
       "parameters": {
-        "jsCode": "return $input.all().map((item) => {\n  const vacancy = item.json;\n\n  return {\n    json: {\n      vacancy_id: String(vacancy.vacancy_id || ''),\n      title: String(vacancy.title || ''),\n      company: String(vacancy.company || ''),\n      previous_status: String(\n        vacancy.telegram_previous_status || ''\n      ),\n      status: String(vacancy.status || ''),\n      telegram_message_id: String(\n        vacancy.telegram_message_id || ''\n      ),\n      url: String(vacancy.url || ''),\n    },\n  };\n});\n"
+        "jsCode": "const sentItems = $('Send Telegram Batch').all();\n\nconst sentByVacancyId = new Map(\n  sentItems.map((item) => {\n    const vacancyId = String(\n      item.json.vacancy_id || ''\n    );\n\n    return [\n      vacancyId,\n      item.json,\n    ];\n  })\n);\n\nreturn $input.all().map((item) => {\n  const updatedRow = item.json;\n\n  const vacancyId = String(\n    updatedRow.vacancy_id || ''\n  );\n\n  const sendResult =\n    sentByVacancyId.get(vacancyId) ||\n    updatedRow;\n\n  return {\n    json: {\n      vacancy_id: vacancyId,\n      title: String(\n        updatedRow.title ||\n        sendResult.title ||\n        ''\n      ),\n      company: String(\n        updatedRow.company ||\n        sendResult.company ||\n        ''\n      ),\n      previous_status: String(\n        sendResult.telegram_previous_status ||\n        ''\n      ),\n      status: String(\n        updatedRow.status ||\n        sendResult.status ||\n        ''\n      ),\n      telegram_message_id: String(\n        updatedRow.telegram_message_id ||\n        sendResult.telegram_message_id ||\n        ''\n      ),\n      send_success:\n        sendResult.telegram_send_success === true,\n      last_error: String(\n        updatedRow.last_error ||\n        sendResult.last_error ||\n        ''\n      ),\n      url: String(\n        updatedRow.url ||\n        sendResult.url ||\n        ''\n      ),\n    },\n  };\n});\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1376,
+        816,
         0
       ],
       "id": "313526d5-5943-49d8-bc11-2e4e5ed31955",
@@ -375,17 +337,16 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "const token = String($env.PANEVIN_BOT || '').trim();\nconst adminId = String($env.PANEVIN_ADMIN_ID || '401063682').trim();\nconst plainText = String($json.telegram_text || '').trim();\n\nif (!token) {\n  throw new Error('PANEVIN_BOT is empty');\n}\n\nif (!adminId) {\n  throw new Error('PANEVIN_ADMIN_ID is empty');\n}\n\nif (!plainText) {\n  throw new Error(`telegram_text is empty for vacancy ${$json.vacancy_id || 'unknown'}`);\n}\n\nfunction escapeHtml(value) {\n  return String(value ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n}\n\nconst marker = 'СОПРОВОДИТЕЛЬНОЕ ПИСЬМО:';\nconst markerIndex = plainText.indexOf(marker);\n\nlet telegramHtml;\n\nif (markerIndex >= 0) {\n  const header = plainText\n    .slice(0, markerIndex)\n    .trim();\n\n  const coverLetter = plainText\n    .slice(markerIndex + marker.length)\n    .trim();\n\n  if (!coverLetter) {\n    throw new Error(\n      `Cover letter is empty for vacancy ${$json.vacancy_id || 'unknown'}`\n    );\n  }\n\n  telegramHtml = [\n    escapeHtml(header),\n    '',\n    `<b>${marker}</b>`,\n    `<pre>${escapeHtml(coverLetter)}</pre>`,\n  ].join('\\n');\n} else {\n  telegramHtml = escapeHtml(plainText);\n}\n\nif (telegramHtml.length > 12000) {\n  throw new Error(\n    `Telegram HTML payload is unexpectedly large for vacancy ${$json.vacancy_id || 'unknown'}: ${telegramHtml.length}`\n  );\n}\n\nlet response;\n\ntry {\n  response = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `https://api.telegram.org/bot${token}/sendMessage`,\n    headers: {\n      'Content-Type': 'application/json',\n    },\n    body: {\n      chat_id: adminId,\n      text: telegramHtml,\n      parse_mode: 'HTML',\n      link_preview_options: {\n        is_disabled: true,\n      },\n    },\n    json: true,\n  });\n} catch (error) {\n  const safeMessage = String(error?.message || error || 'Unknown Telegram error')\n    .split(token)\n    .join('[REDACTED_BOT_TOKEN]');\n\n  throw new Error(\n    `Telegram send failed for vacancy ${$json.vacancy_id || 'unknown'}: ${safeMessage}`\n  );\n}\n\nif (!response?.ok || !response?.result?.message_id) {\n  throw new Error(\n    `Unexpected Telegram response for vacancy ${$json.vacancy_id || 'unknown'}: ${JSON.stringify(response)}`\n  );\n}\n\nreturn {\n  json: {\n    ...$json,\n    telegram_text_html: telegramHtml,\n    telegram_api_response: response.result,\n    message_id: response.result.message_id,\n    telegram_message_id: response.result.message_id,\n  },\n};\n"
+        "jsCode": "const settings = $('Telegram Settings').first().json;\n\nconst batchSize = Math.max(\n  1,\n  Math.min(100, Number(settings.batch_size || 10))\n);\n\nconst delayMs = Math.max(\n  1000,\n  Number(settings.delay_ms || 2000)\n);\n\nconst retryAttempts = Math.max(\n  1,\n  Math.min(5, Number(settings.retry_attempts || 3))\n);\n\nconst retryDelayMs = Math.max(\n  1000,\n  Number(settings.retry_delay_ms || 5000)\n);\n\nconst token = String($env.PANEVIN_BOT || '').trim();\nconst adminId = String(\n  $env.PANEVIN_ADMIN_ID || '401063682'\n).trim();\n\nif (!token) {\n  throw new Error('PANEVIN_BOT is empty');\n}\n\nif (!adminId) {\n  throw new Error('PANEVIN_ADMIN_ID is empty');\n}\n\nconst allowedStatuses = new Set([\n  'letter_ready',\n  'letter_review',\n]);\n\nconst queueLabels = {\n  letter_ready: 'ГОТОВО К ОТКЛИКУ',\n  letter_review: 'ТРЕБУЕТ ПРОВЕРКИ',\n};\n\nconst queuePriority = {\n  letter_ready: 0,\n  letter_review: 1,\n};\n\nconst resumeNames = {\n  ai_automation: 'Инженер по автоматизации и AI-интеграциям',\n  it_infrastructure: 'IT-инженер / системный администратор',\n};\n\nfunction sleep(milliseconds) {\n  return new Promise((resolve) => {\n    setTimeout(resolve, milliseconds);\n  });\n}\n\nfunction parseObject(value) {\n  if (value && typeof value === 'object') {\n    return value;\n  }\n\n  if (typeof value !== 'string' || !value.trim()) {\n    return {};\n  }\n\n  try {\n    return JSON.parse(value);\n  } catch {\n    return {};\n  }\n}\n\nfunction clean(value) {\n  return String(value || '')\n    .replace(/\\u00a0/g, ' ')\n    .replace(/[\\u2013\\u2014\\u2212]/g, '-')\n    .replace(/[\\u2018\\u2019]/g, \"'\")\n    .replace(/[\\u201c\\u201d]/g, '\"')\n    .replace(/\\u2022/g, '-')\n    .replace(/\\u2192/g, '->')\n    .replace(/[ \\t]+/g, ' ')\n    .replace(/ *\\n */g, '\\n')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\n\nfunction escapeHtml(value) {\n  return String(value ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;');\n}\n\nfunction sanitizeError(error) {\n  return String(\n    error?.message ||\n    error ||\n    'Unknown Telegram error'\n  )\n    .split(token)\n    .join('[REDACTED_BOT_TOKEN]')\n    .slice(0, 1500);\n}\n\nfunction getVacancyMetadata(vacancy) {\n  const analysis = parseObject(vacancy.analysis_json);\n\n  const evaluation =\n    analysis.evaluation &&\n    typeof analysis.evaluation === 'object'\n      ? analysis.evaluation\n      : analysis;\n\n  const generation =\n    analysis.cover_letter_generation &&\n    typeof analysis.cover_letter_generation === 'object'\n      ? analysis.cover_letter_generation\n      : {};\n\n  const score = Number.isFinite(Number(vacancy.score))\n    ? Number(vacancy.score)\n    : Number(evaluation.score || 0);\n\n  const decision = String(\n    evaluation.decision ||\n    (\n      score >= 75\n        ? 'recommend'\n        : score >= 60\n          ? 'review'\n          : 'reject'\n    )\n  );\n\n  const warnings = Array.isArray(generation.warnings)\n    ? generation.warnings\n        .map(clean)\n        .filter(Boolean)\n        .slice(0, 5)\n    : [];\n\n  return {\n    score,\n    decision,\n    warnings,\n  };\n}\n\nfunction buildTelegramHtml(vacancy, metadata) {\n  const status = String(vacancy.status || '').trim();\n  const resumeKey = String(\n    vacancy.recommended_resume || ''\n  ).trim();\n\n  const resumeName = resumeNames[resumeKey];\n\n  if (!resumeName) {\n    throw new Error(\n      `Unknown recommended_resume \"${resumeKey}\" for vacancy ${\n        vacancy.vacancy_id || 'unknown'\n      }`\n    );\n  }\n\n  const queueLabel = queueLabels[status];\n\n  if (!queueLabel) {\n    throw new Error(\n      `Unsupported Telegram queue status \"${status}\" for vacancy ${\n        vacancy.vacancy_id || 'unknown'\n      }`\n    );\n  }\n\n  const warnings = metadata.warnings;\n\n  const warningBlock = warnings.length > 0\n    ? [\n        '',\n        '<b>ПРЕДУПРЕЖДЕНИЯ:</b>',\n        ...warnings.map(\n          (warning) => `- ${escapeHtml(warning)}`\n        ),\n      ]\n    : [];\n\n  const reviewNotice = status === 'letter_review'\n    ? [\n        '',\n        '<b>ПРОВЕРЬ ПИСЬМО ПЕРЕД ОТКЛИКОМ</b>',\n      ]\n    : [];\n\n  const coverLetter = clean(vacancy.cover_letter);\n\n  if (!coverLetter) {\n    throw new Error(\n      `Cover letter is empty for vacancy ${\n        vacancy.vacancy_id || 'unknown'\n      }`\n    );\n  }\n\n  const plainLengthCheck = [\n    queueLabel,\n    vacancy.title,\n    vacancy.company,\n    resumeName,\n    vacancy.salary,\n    vacancy.location,\n    vacancy.work_format,\n    vacancy.url,\n    coverLetter,\n    ...warnings,\n  ].join('\\n');\n\n  if (plainLengthCheck.length > 3900) {\n    throw new Error(\n      `Telegram message is too long for vacancy ${\n        vacancy.vacancy_id || 'unknown'\n      }: ${plainLengthCheck.length} characters`\n    );\n  }\n\n  return [\n    `<b>${escapeHtml(queueLabel)}</b>`,\n    '',\n    `<b>${escapeHtml(clean(vacancy.title))}</b>`,\n    escapeHtml(clean(vacancy.company)),\n    '',\n    `Score: ${metadata.score}`,\n    `Decision: ${escapeHtml(metadata.decision)}`,\n    `Резюме: ${escapeHtml(resumeName)}`,\n    `Зарплата: ${escapeHtml(clean(vacancy.salary || 'не указана'))}`,\n    `Локация: ${escapeHtml(clean(vacancy.location || 'не указана'))}`,\n    `Формат: ${escapeHtml(clean(vacancy.work_format || 'unspecified'))}`,\n    ...reviewNotice,\n    ...warningBlock,\n    '',\n    `Вакансия: ${escapeHtml(clean(vacancy.url))}`,\n    '',\n    '<b>СОПРОВОДИТЕЛЬНОЕ ПИСЬМО:</b>',\n    `<pre>${escapeHtml(coverLetter)}</pre>`,\n  ].join('\\n');\n}\n\nasync function sendTelegramMessage(telegramHtml) {\n  let lastError;\n\n  for (\n    let attempt = 1;\n    attempt <= retryAttempts;\n    attempt += 1\n  ) {\n    try {\n      const response = await this.helpers.httpRequest({\n        method: 'POST',\n        url: `https://api.telegram.org/bot${token}/sendMessage`,\n        headers: {\n          'Content-Type': 'application/json',\n        },\n        body: {\n          chat_id: adminId,\n          text: telegramHtml,\n          parse_mode: 'HTML',\n          link_preview_options: {\n            is_disabled: true,\n          },\n        },\n        json: true,\n      });\n\n      if (!response?.ok || !response?.result?.message_id) {\n        throw new Error(\n          `Unexpected Telegram response: ${JSON.stringify(response)}`\n        );\n      }\n\n      return response.result;\n    } catch (error) {\n      lastError = error;\n\n      if (attempt < retryAttempts) {\n        await sleep(retryDelayMs);\n      }\n    }\n  }\n\n  throw lastError;\n}\n\nconst rows = $input.all()\n  .map((item) => {\n    const vacancy = { ...item.json };\n    const metadata = getVacancyMetadata(vacancy);\n\n    return {\n      vacancy,\n      metadata,\n    };\n  })\n  .filter(({ vacancy }) => {\n    const status = String(vacancy.status || '').trim();\n\n    return (\n      allowedStatuses.has(status) &&\n      typeof vacancy.cover_letter === 'string' &&\n      vacancy.cover_letter.trim() &&\n      !String(vacancy.telegram_message_id || '').trim()\n    );\n  })\n  .sort((a, b) => {\n    const aStatus = String(a.vacancy.status || '');\n    const bStatus = String(b.vacancy.status || '');\n\n    const statusDifference =\n      (queuePriority[aStatus] ?? 99) -\n      (queuePriority[bStatus] ?? 99);\n\n    if (statusDifference !== 0) {\n      return statusDifference;\n    }\n\n    if (b.metadata.score !== a.metadata.score) {\n      return b.metadata.score - a.metadata.score;\n    }\n\n    return String(\n      b.vacancy.published_at || ''\n    ).localeCompare(\n      String(a.vacancy.published_at || '')\n    );\n  })\n  .slice(0, batchSize);\n\nconst results = [];\n\nfor (let index = 0; index < rows.length; index += 1) {\n  const { vacancy, metadata } = rows[index];\n\n  const previousStatus = String(\n    vacancy.status || ''\n  ).trim();\n\n  if (index > 0) {\n    await sleep(delayMs);\n  }\n\n  try {\n    const telegramHtml = buildTelegramHtml(\n      vacancy,\n      metadata\n    );\n\n    const telegramResponse =\n      await sendTelegramMessage.call(\n        this,\n        telegramHtml\n      );\n\n    results.push({\n      json: {\n        ...vacancy,\n        telegram_previous_status: previousStatus,\n        telegram_message_id: String(\n          telegramResponse.message_id\n        ),\n        status: 'sent_to_telegram',\n        updated_at: new Date().toISOString(),\n        last_error: '',\n        telegram_send_success: true,\n      },\n    });\n  } catch (error) {\n    const safeMessage = sanitizeError(error);\n\n    results.push({\n      json: {\n        ...vacancy,\n        telegram_previous_status: previousStatus,\n        status: previousStatus,\n        updated_at: new Date().toISOString(),\n        last_error: `Telegram send failed: ${safeMessage}`,\n        telegram_send_success: false,\n      },\n    });\n  }\n}\n\nreturn results;\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        864,
+        480,
         0
       ],
-      "id": "98d891c2-18c2-4307-b00f-76ef7354e577",
-      "name": "Send Telegram Message"
+      "id": "ecf77779-3e20-4d19-a851-2e78e2aa6d68",
+      "name": "Send Telegram Batch"
     }
   ],
   "pinData": {},
@@ -416,40 +377,7 @@
       "main": [
         [
           {
-            "node": "Select Telegram Batch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Select Telegram Batch": {
-      "main": [
-        [
-          {
-            "node": "Build Telegram Message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Build Telegram Message": {
-      "main": [
-        [
-          {
-            "node": "Send Telegram Message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Telegram Update": {
-      "main": [
-        [
-          {
-            "node": "Mark Sent To Telegram",
+            "node": "Send Telegram Batch",
             "type": "main",
             "index": 0
           }
@@ -467,11 +395,11 @@
         ]
       ]
     },
-    "Send Telegram Message": {
+    "Send Telegram Batch": {
       "main": [
         [
           {
-            "node": "Prepare Telegram Update",
+            "node": "Mark Sent To Telegram",
             "type": "main",
             "index": 0
           }
@@ -484,7 +412,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "a3326c9b-0d95-4dc9-972b-c646080bf8fc",
+  "versionId": "6b62a85b-df23-40a8-9cd8-373e9e10c2d5",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
