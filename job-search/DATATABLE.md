@@ -26,7 +26,7 @@ job_vacancies
 | source_query | String | Имя поисковой конфигурации. |
 | description_text | String | Очищенное описание вакансии. |
 | content_hash | String | Хеш нормализованного содержимого. |
-| status | String | Текущий статус обработки. |
+| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, letter_ready или letter_review. |
 | filter_reason | String | Причина отклонения жестким фильтром. |
 | score | Number | Итоговая оценка соответствия. |
 | recommended_resume | String | Рекомендованный вариант резюме. |

@@ -510,3 +510,56 @@ Job Search - 04 Generate Cover Letters
 ```
 
 После него готовые вакансии и письма передаются в Telegram для быстрого ручного отклика.
+
+## 04. Автоматическая генерация сопроводительных писем
+
+Production workflow:
+
+```text
+workflows/04-generate-cover-letters.json
+```
+
+Внутреннее имя:
+
+```text
+Job Search - 04 Generate Cover Letters
+```
+
+Конвейер:
+
+```text
+Manual Trigger
+-> Get Scored Vacancies
+-> Select Letter Batch
+-> Build Cover Letter Request
+-> OpenRouter Cover Letter
+-> Parse Cover Letter Response
+-> Save Cover Letter
+-> Letter Export
+```
+
+Workflow:
+
+- получает вакансии со status `scored`;
+- повторно проверяет детерминированные hard blockers;
+- не использует score, decision или critical gap как автоматический запрет письма;
+- выбирает `ai_automation` или `it_infrastructure`;
+- не создает письмо повторно, если поле `cover_letter` уже заполнено;
+- использует `CANDIDATE_PROFILE.md` как единственный источник профессиональных фактов;
+- не использует evidence и matching requirements из scoring как источник фактов;
+- вызывает OpenRouter напрямую из Code JS через `$env.OPENROUTER_API_KEY`;
+- сохраняет готовые письма со status `letter_ready`;
+- сохраняет письма с потенциально неподтвержденными утверждениями со status `letter_review`;
+- оставляет объективно заблокированные вакансии со status `scored`.
+
+Результат первого production-запуска:
+
+- исходно оценено: 86 вакансий;
+- `letter_ready`: 59;
+- `letter_review`: 9;
+- осталось `scored`: 18;
+- всего создано писем: 68;
+- `filtered`: 72;
+- `parse_failed`: 2.
+
+Следующий этап - передача `letter_ready` и отдельно помеченных `letter_review` в Telegram для ручной проверки и отклика на hh.ru.
