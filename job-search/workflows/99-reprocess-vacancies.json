@@ -1,0 +1,754 @@
+{
+  "name": "Job Search - 99 Reprocess Existing Vacancies",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "BBkNn35THhjK8u8i",
+          "mode": "list",
+          "cachedResultName": "job_vacancies",
+          "cachedResultUrl": "/projects/sIo9PqXeNC43L6eV/datatables/BBkNn35THhjK8u8i"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        32
+      ],
+      "id": "9068e94e-aeed-4064-b39b-d1bb6a20ba33",
+      "name": "Get Existing Vacancies"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        272
+      ],
+      "id": "2a310650-a490-47e4-b97f-f1e13439364f",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const vacancy = { ...$json };\n\nfunction normalizeText(value) {\n  return String(value || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .replace(/[ \\t]+/g, \" \")\n    .replace(/\\s+([,.;:!?])/g, \"$1\")\n    .trim();\n}\n\nfunction normalizeExistingWorkFormat(currentValue, descriptionValue) {\n  const current = normalizeText(currentValue).toLowerCase();\n  const description = normalizeText(descriptionValue).toLowerCase();\n\n  if (\n    /работа только в офисе|только офисный формат|удал[её]нного формата нет|удал[её]нной работы нет|удал[её]нно работать нельзя/.test(\n      description\n    )\n  ) {\n    return \"office\";\n  }\n\n  if (\n    /разъездн(?:ая|ой|ую)\\s+работ|выезжать к клиентам|выездн(?:ая|ой|ые)\\s+работ|установка оборудования.*у клиент/.test(\n      description\n    )\n  ) {\n    return \"field\";\n  }\n\n  if (\n    /гибридн(?:ая|ый|ое|ом)\\s+(?:работа|формат)|частично удал[её]нн|несколько дней в офисе/.test(\n      description\n    )\n  ) {\n    return \"hybrid\";\n  }\n\n  if (\n    /удал[её]нн(?:ая|ый|ое|ой)\\s+(?:работа|формат)|работа\\s+удал[её]нно|полностью удал[её]нн/.test(\n      description\n    )\n  ) {\n    return \"remote\";\n  }\n\n  const allowedCurrentValues = new Set([\n    \"remote\",\n    \"hybrid\",\n    \"office\",\n    \"field\",\n    \"unspecified\",\n  ]);\n\n  if (allowedCurrentValues.has(current)) {\n    return current;\n  }\n\n  return \"unspecified\";\n}\n\nvacancy.work_format = normalizeExistingWorkFormat(\n  vacancy.work_format,\n  vacancy.description_text\n);\n\nvacancy.updated_at = new Date().toISOString();\n\nreturn {\n  json: vacancy,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ],
+      "id": "3c711e31-40ce-45fb-bdcd-c8c4f99d709c",
+      "name": "Normalize Existing Work Format"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const vacancy = { ...$json };\n\nconst title = String(vacancy.title || \"\")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nconst description = String(vacancy.description_text || \"\")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nconst reasons = [];\n\nconst titleBlockers = [\n  {\n    code: \"sales_role\",\n    pattern:\n      /менеджер по продажам|руководитель продаж|sales manager|account manager|аккаунт-менеджер|business development|менеджер по работе с партнерами|менеджер по работе с клиентами/i,\n  },\n  {\n    code: \"marketing_seo_role\",\n    pattern:\n      /маркетолог|media buyer|медиабайер|контекстн(?:ая|ой)\\s+реклам|seo[- /]|seo специалист|seo-специалист|seo developer|community manager|контент[- ]менеджер|руководитель.*\\bpr\\b/i,\n  },\n  {\n    code: \"assistant_role\",\n    pattern:\n      /ассистент руководителя|помощник руководителя|бизнес-ассистент|личный ассистент/i,\n  },\n  {\n    code: \"project_product_role\",\n    pattern:\n      /project manager|product manager|project\\/product manager|руководитель проектов|менеджер проектов|проджект[- ]менеджер|продакт[- ]менеджер/i,\n  },\n  {\n    code: \"recruiting_role\",\n    pattern:\n      /рекрутер|hr[- ]менеджер|hr manager|менеджер по персоналу|специалист по подбору персонала/i,\n  },\n  {\n    code: \"qa_testing_role\",\n    pattern:\n      /\\baqa\\b|\\bqa\\b|quality assurance|automation qa|qa automation|тестировщик|тестировани[ея]|автоматизатор тестирования|инженер по автоматизации тестирования|sdet/i,\n  },\n  {\n    code: \"ml_ds_role\",\n    pattern:\n      /machine learning|\\bml[- /]|ml engineer|ml-инженер|ml\\/ds|data scientist|data science|ds инженер|инженер машинного обучения|разработчик искусственного интеллекта|разработчик рекомендательной системы/i,\n  },\n  {\n    code: \"pure_software_development\",\n    pattern:\n      /fullstack|full-stack|frontend|front-end|backend|back-end|php[- ]разработчик|java[- ]разработчик|golang[- ]разработчик|разработчик c\\+\\+|data engineer|data-инженер|dwh engineer/i,\n  },\n  {\n    code: \"industrial_automation_role\",\n    pattern:\n      /асу\\s*тп|асутп|кипиа|кип и а|\\bplc\\b|плк|\\bscada\\b|автоматизаци[яи] технологических процессов|автоматизаци[яи] производства|инженер пнр/i,\n  },\n  {\n    code: \"industrial_engineering_role\",\n    pattern:\n      /инженер-технолог|ведущий инженер-технолог|инженер-конструктор|инженер-схемотехник|инженер-испытатель|монтажник рэа|электрооборудовани[юя].*автоматизаци|инженер-проектировщик.*эом|инженер производственного склада/i,\n  },\n  {\n    code: \"one_c_development_role\",\n    pattern:\n      /программист\\s*1с|разработчик\\s*1с|1с[- ]разработчик/i,\n  },\n  {\n    code: \"non_it_role\",\n    pattern:\n      /курьер|водитель|кладовщик|комплектовщик|повар|продавец-консультант|ведущий юрист|менеджер по логистике|методолог образовательных программ|эксплуатаци[яи] и ремонт.*помещени/i,\n  },\n  {\n    code: \"computer_club_role\",\n    pattern:\n      /администратор компьютерного клуба/i,\n  },\n  {\n    code: \"traffic_arbitrage_role\",\n    pattern:\n      /traffic arbitrage|traffic buyer|арбитраж трафика/i,\n  },\n];\n\nfor (const blocker of titleBlockers) {\n  if (blocker.pattern.test(title)) {\n    reasons.push(blocker.code);\n  }\n}\n\nif (!vacancy.vacancy_id) {\n  reasons.push(\"missing_vacancy_id\");\n}\n\nif (!vacancy.url) {\n  reasons.push(\"missing_url\");\n}\n\nif (!title) {\n  reasons.push(\"missing_title\");\n}\n\nif (!description || description.length < 200) {\n  reasons.push(\"insufficient_description\");\n}\n\nconst parseFailureReasons = new Set([\n  \"missing_vacancy_id\",\n  \"missing_url\",\n  \"missing_title\",\n  \"insufficient_description\",\n]);\n\nconst hasParseFailure = reasons.some((reason) =>\n  parseFailureReasons.has(reason)\n);\n\nif (hasParseFailure) {\n  vacancy.status = \"parse_failed\";\n} else if (reasons.length > 0) {\n  vacancy.status = \"filtered\";\n} else {\n  vacancy.status = \"found\";\n}\n\nvacancy.filter_reason = reasons.join(\",\");\nvacancy.updated_at = new Date().toISOString();\n\nif (vacancy.status === \"parse_failed\" && !vacancy.last_error) {\n  vacancy.last_error =\n    \"Required vacancy data is missing or incomplete\";\n}\n\nreturn {\n  json: vacancy,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        32
+      ],
+      "id": "6ecbdce7-ef9d-4aa3-8228-4d0f91f70855",
+      "name": "Apply Hard Filters Reprocess"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "BBkNn35THhjK8u8i",
+          "mode": "list",
+          "cachedResultName": "job_vacancies",
+          "cachedResultUrl": "/projects/sIo9PqXeNC43L6eV/datatables/BBkNn35THhjK8u8i"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "vacancy_id",
+              "keyValue": "={{ $json.vacancy_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "vacancy_id",
+              "displayName": "vacancy_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "work_format",
+              "displayName": "work_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "experience",
+              "displayName": "experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "first_seen_at",
+              "displayName": "first_seen_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_query",
+              "displayName": "source_query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description_text",
+              "displayName": "description_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content_hash",
+              "displayName": "content_hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "filter_reason",
+              "displayName": "filter_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recommended_resume",
+              "displayName": "recommended_resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "analysis_json",
+              "displayName": "analysis_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cover_letter",
+              "displayName": "cover_letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telegram_message_id",
+              "displayName": "telegram_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_error",
+              "displayName": "last_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        0
+      ],
+      "id": "cf07ddd6-4e82-4601-9276-3f57e15a0a7c",
+      "name": "Update Existing Vacancy"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst summary = {\n  total: items.length,\n  found: 0,\n  filtered: 0,\n  parse_failed: 0,\n  other: 0,\n  work_format: {\n    remote: 0,\n    hybrid: 0,\n    office: 0,\n    field: 0,\n    unspecified: 0,\n    other: 0,\n  },\n  filter_reasons: {},\n};\n\nfor (const item of items) {\n  const vacancy = item.json;\n  const status = String(vacancy.status || \"\");\n  const workFormat = String(\n    vacancy.work_format || \"unspecified\"\n  );\n\n  if (\n    status === \"found\" ||\n    status === \"filtered\" ||\n    status === \"parse_failed\"\n  ) {\n    summary[status] += 1;\n  } else {\n    summary.other += 1;\n  }\n\n  if (\n    Object.prototype.hasOwnProperty.call(\n      summary.work_format,\n      workFormat\n    )\n  ) {\n    summary.work_format[workFormat] += 1;\n  } else {\n    summary.work_format.other += 1;\n  }\n\n  const reasons = String(vacancy.filter_reason || \"\")\n    .split(\",\")\n    .map((value) => value.trim())\n    .filter(Boolean);\n\n  for (const reason of reasons) {\n    summary.filter_reasons[reason] =\n      (summary.filter_reasons[reason] || 0) + 1;\n  }\n}\n\nsummary.filter_reasons = Object.fromEntries(\n  Object.entries(summary.filter_reasons)\n    .sort((left, right) => right[1] - left[1])\n);\n\nreturn [\n  {\n    json: summary,\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        32
+      ],
+      "id": "dae97286-0ba4-48e8-b43f-9a0bf8e620d9",
+      "name": "Reprocess Summary"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "BBkNn35THhjK8u8i",
+          "mode": "list",
+          "cachedResultName": "job_vacancies",
+          "cachedResultUrl": "/projects/sIo9PqXeNC43L6eV/datatables/BBkNn35THhjK8u8i"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "keyValue": "scored"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        272
+      ],
+      "id": "a9584d61-a04d-4ed8-a53b-702bc84e6a90",
+      "name": "Get Scored Vacancies"
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseSalaryAmount(rawValue, hasThousands) {\n  let number = Number(\n    String(rawValue || \"\")\n      .replace(/\\u00a0/g, \" \")\n      .replace(/\\s/g, \"\")\n      .replace(\",\", \".\")\n  );\n\n  if (!Number.isFinite(number)) {\n    return null;\n  }\n\n  if (hasThousands && number < 1000) {\n    number *= 1000;\n  }\n\n  if (number < 10000 || number > 2000000) {\n    return null;\n  }\n\n  return Math.round(number);\n}\n\nfunction extractUpperBounds(text) {\n  const source = String(text || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .toLowerCase();\n\n  const values = [];\n\n  const rangePattern =\n    /(\\d[\\d\\s]*(?:[.,]\\d+)?)\\s*(тыс(?:\\.|яч[аи])?|[кk])?\\s*(?:-|–|—|до)\\s*(\\d[\\d\\s]*(?:[.,]\\d+)?)\\s*(тыс(?:\\.|яч[аи])?|[кk])?(?:\\s*(?:руб(?:\\.|ля|лей)?|rur)|\\s*₽)?/gi;\n\n  for (const match of source.matchAll(rangePattern)) {\n    const hasThousands = Boolean(match[2] || match[4]);\n\n    const upper = parseSalaryAmount(\n      match[3],\n      Boolean(match[4]) || hasThousands\n    );\n\n    if (upper !== null) {\n      values.push(upper);\n    }\n  }\n\n  const upperLimitPattern =\n    /(?:до|максимум|max)\\s*(\\d[\\d\\s]*(?:[.,]\\d+)?)\\s*(тыс(?:\\.|яч[аи])?|[кk])?(?:\\s*(?:руб(?:\\.|ля|лей)?|rur)|\\s*₽)?/gi;\n\n  for (\n    const match of source.matchAll(upperLimitPattern)\n  ) {\n    const upper = parseSalaryAmount(\n      match[1],\n      Boolean(match[2])\n    );\n\n    if (upper !== null) {\n      values.push(upper);\n    }\n  }\n\n  return values;\n}\n\nfunction extractSalaryContexts(descriptionValue) {\n  const description = String(descriptionValue || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .replace(/\\s+/g, \" \")\n    .toLowerCase();\n\n  const markerPattern =\n    /зарплат|заработн|оклад|доход|оплат[аы]|вознагражден|вилк/gi;\n\n  const contexts = [];\n\n  for (\n    const match of description.matchAll(markerPattern)\n  ) {\n    const start = Math.max(0, match.index - 60);\n    const end = Math.min(\n      description.length,\n      match.index + 220\n    );\n\n    contexts.push(\n      description.slice(start, end)\n    );\n  }\n\n  return contexts;\n}\n\nfunction extractKnownSalaryUpperBound(\n  salaryValue,\n  descriptionValue\n) {\n  const salary = String(salaryValue || \"\")\n    .replace(/\\u00a0/g, \" \")\n    .replace(/\\s+/g, \" \")\n    .toLowerCase()\n    .trim();\n\n  const salaryIsUnknown =\n    !salary ||\n    /не указана|не указано|по договор[её]нности/.test(\n      salary\n    );\n\n  if (!salaryIsUnknown) {\n    if (\n      /usd|eur|доллар|евро|тенге|₸|\\$|€/.test(\n        salary\n      ) &&\n      !/(?:руб|₽|rur)/.test(salary)\n    ) {\n      return null;\n    }\n\n    if (\n      /в час|за час|в день|за день|в неделю|за неделю/.test(\n        salary\n      )\n    ) {\n      return null;\n    }\n\n    const isLowerBoundOnly =\n      /^\\s*от\\s*\\d/i.test(salary) &&\n      !/до\\s*\\d/i.test(salary) &&\n      !/(?:-|–|—)\\s*\\d/i.test(salary);\n\n    if (isLowerBoundOnly) {\n      return null;\n    }\n\n    const structuredBounds =\n      extractUpperBounds(salary);\n\n    if (structuredBounds.length > 0) {\n      return Math.max(...structuredBounds);\n    }\n\n    const fixedPattern =\n      /(\\d[\\d\\s]*(?:[.,]\\d+)?)\\s*(тыс(?:\\.|яч[аи])?|[кk])?(?:\\s*(?:руб(?:\\.|ля|лей)?|rur)|\\s*₽)/gi;\n\n    const fixedValues = [];\n\n    for (\n      const match of salary.matchAll(fixedPattern)\n    ) {\n      const fixed = parseSalaryAmount(\n        match[1],\n        Boolean(match[2])\n      );\n\n      if (fixed !== null) {\n        fixedValues.push(fixed);\n      }\n    }\n\n    return fixedValues.length > 0\n      ? Math.max(...fixedValues)\n      : null;\n  }\n\n  const descriptionBounds = [];\n\n  for (\n    const context of extractSalaryContexts(\n      descriptionValue\n    )\n  ) {\n    descriptionBounds.push(\n      ...extractUpperBounds(context)\n    );\n  }\n\n  return descriptionBounds.length > 0\n    ? Math.max(...descriptionBounds)\n    : null;\n}\n\nfunction parseAnalysis(value) {\n  if (value && typeof value === \"object\") {\n    return value;\n  }\n\n  if (typeof value !== \"string\" || !value.trim()) {\n    return null;\n  }\n\n  try {\n    return JSON.parse(value);\n  } catch {\n    return null;\n  }\n}\n\nfunction normalizeList(value) {\n  return Array.isArray(value)\n    ? value\n        .map((entry) => String(entry || \"\").trim())\n        .filter(Boolean)\n    : [];\n}\n\nfunction calculateBaseScore(evaluation) {\n  const breakdown =\n    evaluation.score_breakdown &&\n    typeof evaluation.score_breakdown === \"object\"\n      ? evaluation.score_breakdown\n      : {};\n\n  const values = [\n    Number(breakdown.role_fit),\n    Number(breakdown.skills_fit),\n    Number(breakdown.evidence_strength),\n    Number(breakdown.conditions_fit),\n  ];\n\n  if (!values.every(Number.isFinite)) {\n    const fallback = Number(evaluation.score);\n    return Number.isFinite(fallback) ? fallback : 0;\n  }\n\n  return values.reduce(\n    (total, value) => total + value,\n    0\n  );\n}\n\nfunction calculateDecision(score) {\n  if (score >= 75) {\n    return \"recommend\";\n  }\n\n  if (score >= 60) {\n    return \"review\";\n  }\n\n  return \"reject\";\n}\n\nconst minimumNetSalary = {\n  ai_automation: 120000,\n  it_infrastructure: 100000,\n};\n\nconst deterministicSalaryRiskPattern =\n  /^Максимальная указанная зарплата \\d+ руб\\. ниже минимального порога \\d+ руб\\. на руки$/;\n\nconst output = [];\n\nfor (const item of $input.all()) {\n  const vacancy = { ...item.json };\n  const analysis = parseAnalysis(\n    vacancy.analysis_json\n  );\n\n  if (!analysis) {\n    continue;\n  }\n\n  const evaluation =\n    analysis.evaluation &&\n    typeof analysis.evaluation === \"object\"\n      ? { ...analysis.evaluation }\n      : null;\n\n  if (!evaluation) {\n    continue;\n  }\n\n  const recommendedResume = String(\n    vacancy.recommended_resume ||\n    evaluation.recommended_resume ||\n    \"none\"\n  );\n\n  const threshold =\n    minimumNetSalary[recommendedResume] || null;\n\n  if (threshold === null) {\n    continue;\n  }\n\n  const salaryUpperBound =\n    extractKnownSalaryUpperBound(\n      vacancy.salary,\n      vacancy.description_text\n    );\n\n  let blockingReasons = normalizeList(\n    evaluation.blocking_reasons\n  );\n\n  let riskFlags = normalizeList(\n    evaluation.risk_flags\n  );\n\n  const hadSalaryBlock =\n    blockingReasons.includes(\n      \"salary_below_minimum\"\n    );\n\n  const shouldHaveSalaryBlock =\n    salaryUpperBound !== null &&\n    salaryUpperBound < threshold;\n\n  if (\n    hadSalaryBlock === shouldHaveSalaryBlock\n  ) {\n    continue;\n  }\n\n  let baseScore = calculateBaseScore(evaluation);\n\n  if (evaluation.critical_gap === true) {\n    baseScore = Math.min(baseScore, 59);\n  }\n\n  let action;\n\n  if (shouldHaveSalaryBlock) {\n    action = \"salary_block_applied\";\n\n    blockingReasons.push(\n      \"salary_below_minimum\"\n    );\n\n    const salaryRisk =\n      `Максимальная указанная зарплата ` +\n      `${salaryUpperBound} руб. ниже минимального ` +\n      `порога ${threshold} руб. на руки`;\n\n    if (!riskFlags.includes(salaryRisk)) {\n      riskFlags.push(salaryRisk);\n    }\n\n    evaluation.score = Math.min(\n      baseScore,\n      59\n    );\n    evaluation.decision = \"reject\";\n    evaluation.cover_letter_recommended = false;\n  } else {\n    action = \"salary_block_removed\";\n\n    blockingReasons = blockingReasons.filter(\n      (reason) =>\n        reason !== \"salary_below_minimum\"\n    );\n\n    riskFlags = riskFlags.filter(\n      (risk) =>\n        !deterministicSalaryRiskPattern.test(risk)\n    );\n\n    evaluation.score = baseScore;\n    evaluation.decision =\n      calculateDecision(baseScore);\n    evaluation.cover_letter_recommended =\n      evaluation.decision === \"recommend\" ||\n      evaluation.decision === \"review\";\n  }\n\n  evaluation.blocking_reasons =\n    blockingReasons;\n\n  evaluation.risk_flags =\n    riskFlags.slice(0, 5);\n\n  const updatedAt = $now.toUTC().toISO();\n\n  analysis.evaluation = evaluation;\n  analysis.salary_reprocessed_at = updatedAt;\n  analysis.salary_reprocess_action = action;\n  analysis.detected_salary_upper_bound =\n    salaryUpperBound;\n\n  vacancy.score = evaluation.score;\n  vacancy.analysis_json =\n    JSON.stringify(analysis);\n  vacancy.updated_at = updatedAt;\n  vacancy.last_error = \"\";\n\n  output.push({\n    json: vacancy,\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        272
+      ],
+      "id": "514517da-dbb9-4101-9c00-42d6fe511172",
+      "name": "Apply Salary Blocks"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "BBkNn35THhjK8u8i",
+          "mode": "list",
+          "cachedResultName": "job_vacancies",
+          "cachedResultUrl": "/projects/sIo9PqXeNC43L6eV/datatables/BBkNn35THhjK8u8i"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "vacancy_id",
+              "keyValue": "={{ $json.vacancy_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "vacancy_id",
+              "displayName": "vacancy_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "work_format",
+              "displayName": "work_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "experience",
+              "displayName": "experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "first_seen_at",
+              "displayName": "first_seen_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_query",
+              "displayName": "source_query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description_text",
+              "displayName": "description_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content_hash",
+              "displayName": "content_hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "filter_reason",
+              "displayName": "filter_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "recommended_resume",
+              "displayName": "recommended_resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "analysis_json",
+              "displayName": "analysis_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cover_letter",
+              "displayName": "cover_letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telegram_message_id",
+              "displayName": "telegram_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_error",
+              "displayName": "last_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        576,
+        368
+      ],
+      "id": "238e8043-8e77-42c5-808b-d192cd968464",
+      "name": "Update Scored Vacancy"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item) => {\n  const vacancy = item.json;\n\n  let analysis = {};\n\n  try {\n    analysis = JSON.parse(\n      String(vacancy.analysis_json || \"{}\")\n    );\n  } catch {\n    analysis = {};\n  }\n\n  const evaluation = analysis.evaluation || {};\n\n  return {\n    json: {\n      vacancy_id: String(vacancy.vacancy_id || \"\"),\n      title: String(vacancy.title || \"\"),\n      salary: String(vacancy.salary || \"\"),\n      detected_salary_upper_bound:\n        analysis.detected_salary_upper_bound ?? null,\n      salary_reprocess_action: String(\n        analysis.salary_reprocess_action || \"\"\n      ),\n      score: Number(vacancy.score || 0),\n      decision: String(evaluation.decision || \"\"),\n      recommended_resume: String(\n        vacancy.recommended_resume || \"none\"\n      ),\n      blocking_reasons: Array.isArray(\n        evaluation.blocking_reasons\n      )\n        ? evaluation.blocking_reasons\n        : [],\n      cover_letter_recommended:\n        evaluation.cover_letter_recommended === true,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        224
+      ],
+      "id": "f27222dd-ce13-47f5-a81d-104098e2a336",
+      "name": "Salary Block Export"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Scored Vacancies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Vacancies": {
+      "main": [
+        [
+          {
+            "node": "Normalize Existing Work Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Existing Work Format": {
+      "main": [
+        [
+          {
+            "node": "Apply Hard Filters Reprocess",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Hard Filters Reprocess": {
+      "main": [
+        [
+          {
+            "node": "Update Existing Vacancy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Existing Vacancy": {
+      "main": [
+        [
+          {
+            "node": "Reprocess Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scored Vacancies": {
+      "main": [
+        [
+          {
+            "node": "Apply Salary Blocks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Salary Blocks": {
+      "main": [
+        [
+          {
+            "node": "Update Scored Vacancy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Salary Block Export",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "684f9ab3-eb87-47aa-a280-4d2b94efb3be",
+  "meta": {
+    "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
+  },
+  "nodeGroups": [],
+  "id": "T8cwGhvH6lwKkIqL",
+  "tags": []
+}
