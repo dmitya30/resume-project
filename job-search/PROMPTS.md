@@ -141,11 +141,21 @@
 
 ```js
 cover_letter_recommended =
-  decision === "recommend" ||
-  decision === "review";
+  validRecommendedResume &&
+  !hasHardBlocker;
 ```
 
-В дальнейшем порог можно сузить до `score >= 65` после дополнительной калибровки.
+`score`, `decision` и `critical_gap` используются для ранжирования и предупреждений. Они не запрещают подготовку письма сами по себе.
+
+Hard blockers:
+
+- `salary_below_minimum`;
+- `location_format_mismatch`;
+- `vacancy_archived`;
+- `vacancy_unavailable`;
+- невозможность выбрать `ai_automation` или `it_infrastructure`.
+
+Отсутствие отдельной технологии или продукта снижает оценку, но не блокирует письмо, если основное направление роли соответствует профилю. При этом письмо не должно приписывать кандидату отсутствующий опыт.
 
 ## Выход scoring v2
 
@@ -192,7 +202,7 @@ none
 
 ## Сопроводительное письмо
 
-Письмо создается только если итоговый Code JS установил `cover_letter_recommended=true`.
+Письмо создается для любой вакансии с допустимым вариантом резюме и без hard blocker, включая `decision=reject` и `critical_gap=true`.
 
 Требования:
 

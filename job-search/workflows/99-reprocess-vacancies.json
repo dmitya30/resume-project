@@ -28,7 +28,7 @@
       "typeVersion": 1,
       "position": [
         -16,
-        272
+        480
       ],
       "id": "2a310650-a490-47e4-b97f-f1e13439364f",
       "name": "Manual Trigger"
@@ -358,7 +358,7 @@
       "typeVersion": 1.1,
       "position": [
         144,
-        272
+        480
       ],
       "id": "a9584d61-a04d-4ed8-a53b-702bc84e6a90",
       "name": "Get Scored Vacancies"
@@ -371,7 +371,7 @@
       "typeVersion": 2,
       "position": [
         320,
-        272
+        336
       ],
       "id": "514517da-dbb9-4101-9c00-42d6fe511172",
       "name": "Apply Salary Blocks"
@@ -629,8 +629,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        576,
-        368
+        496,
+        336
       ],
       "id": "238e8043-8e77-42c5-808b-d192cd968464",
       "name": "Update Scored Vacancy"
@@ -642,11 +642,24 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        576,
-        224
+        496,
+        192
       ],
       "id": "f27222dd-ce13-47f5-a81d-104098e2a336",
       "name": "Salary Block Export"
+    },
+    {
+      "parameters": {
+        "jsCode": "const parseJson = (value) => {\n  if (value && typeof value === 'object') {\n    return value;\n  }\n\n  if (typeof value !== 'string' || !value.trim()) {\n    return {};\n  }\n\n  try {\n    return JSON.parse(value);\n  } catch {\n    return {};\n  }\n};\n\nconst asArray = (value) => {\n  return Array.isArray(value)\n    ? value.map((item) => String(item)).filter(Boolean)\n    : [];\n};\n\nconst asBoolean = (value) => {\n  return value === true || value === 'true';\n};\n\nconst hardBlockingReasons = new Set([\n  'salary_below_minimum',\n  'location_format_mismatch',\n  'vacancy_archived',\n  'vacancy_unavailable',\n]);\n\nconst decisionPriority = {\n  recommend: 0,\n  review: 1,\n  reject: 2,\n};\n\nconst rows = $input.all().map((item) => {\n  const vacancy = { ...item.json };\n  const analysis = parseJson(vacancy.analysis_json);\n\n  const score = Number.isFinite(Number(vacancy.score))\n    ? Number(vacancy.score)\n    : Number(analysis.score || 0);\n\n  const decision = String(\n    analysis.decision ||\n      (score >= 75 ? 'recommend' : score >= 60 ? 'review' : 'reject')\n  );\n\n  const recommendedResume = String(\n    vacancy.recommended_resume ||\n      analysis.recommended_resume ||\n      'none'\n  );\n\n  const blockingReasons = asArray(analysis.blocking_reasons);\n  const validRecommendedResume = [\n    'ai_automation',\n    'it_infrastructure',\n  ].includes(recommendedResume);\n\n  const hasHardBlocker = blockingReasons.some(\n    (reason) => hardBlockingReasons.has(reason)\n  );\n\n  return {\n    vacancy_id: String(vacancy.vacancy_id || ''),\n    url: String(vacancy.url || ''),\n    title: String(vacancy.title || ''),\n    company: String(vacancy.company || ''),\n    salary: String(vacancy.salary || ''),\n    location: String(vacancy.location || ''),\n    work_format: String(vacancy.work_format || ''),\n    published_at: String(vacancy.published_at || ''),\n    source_query: String(vacancy.source_query || ''),\n    score,\n    decision,\n    recommended_resume: recommendedResume,\n    critical_gap: asBoolean(analysis.critical_gap),\n    critical_gaps: asArray(analysis.critical_gaps),\n    blocking_reasons: blockingReasons,\n    cover_letter_recommended:\n      validRecommendedResume && !hasHardBlocker,\n    matching_requirements: asArray(\n      analysis.matching_requirements\n    ),\n    missing_requirements: asArray(\n      analysis.missing_requirements\n    ),\n    risk_flags: asArray(analysis.risk_flags),\n    summary: String(analysis.summary || '').slice(0, 600),\n    eligible: validRecommendedResume && !hasHardBlocker,\n  };\n});\n\nconst decisionCounts = {\n  recommend: 0,\n  review: 0,\n  reject: 0,\n  other: 0,\n};\n\nfor (const row of rows) {\n  if (Object.hasOwn(decisionCounts, row.decision)) {\n    decisionCounts[row.decision] += 1;\n  } else {\n    decisionCounts.other += 1;\n  }\n}\n\nconst eligible = rows\n  .filter((row) => row.eligible)\n  .sort((a, b) => {\n    const decisionDifference =\n      (decisionPriority[a.decision] ?? 3) -\n      (decisionPriority[b.decision] ?? 3);\n\n    if (decisionDifference !== 0) {\n      return decisionDifference;\n    }\n\n    if (b.score !== a.score) {\n      return b.score - a.score;\n    }\n\n    return String(b.published_at).localeCompare(\n      String(a.published_at)\n    );\n  });\n\nconst compact = (row) => {\n  const { eligible: _eligible, ...result } = row;\n  return result;\n};\n\nconst aiAutomation = eligible.filter(\n  (row) => row.recommended_resume === 'ai_automation'\n);\n\nconst itInfrastructure = eligible.filter(\n  (row) => row.recommended_resume === 'it_infrastructure'\n);\n\nreturn [\n  {\n    json: {\n      generated_at: $now.toUTC().toISO(),\n      total_scored: rows.length,\n      eligible_total: eligible.length,\n      hard_blocked_total: rows.length - eligible.length,\n      decision_counts: decisionCounts,\n      ai_automation_eligible: aiAutomation.length,\n      it_infrastructure_eligible: itInfrastructure.length,\n      ai_automation_top_10: aiAutomation\n        .slice(0, 10)\n        .map(compact),\n      it_infrastructure_top_10: itInfrastructure\n        .slice(0, 10)\n        .map(compact),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        480
+      ],
+      "id": "c385fbfb-2ea1-49a5-88d2-a4b82f03f9ad",
+      "name": "Build Application Shortlist"
     }
   ],
   "pinData": {},
@@ -713,6 +726,11 @@
             "node": "Apply Salary Blocks",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Build Application Shortlist",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -744,7 +762,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "684f9ab3-eb87-47aa-a280-4d2b94efb3be",
+  "versionId": "e348aac4-a1da-4d33-9376-8bed958018c6",
   "meta": {
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
   },
