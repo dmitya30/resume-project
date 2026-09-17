@@ -159,3 +159,14 @@ Use these evidence markers in internal working documents:
 - Vacancies excluded by objective application blockers must receive the terminal status `application_blocked` instead of remaining in `scored`.
 - Do not clear or reset the Data Table after ordinary failures. Resume processing from persisted statuses unless a clean test run is explicitly required.
 - Before activating a Schedule Trigger, complete one successful manual orchestration run.
+
+
+## High-volume application policy
+
+- The operational goal is a broad flow of truthful manual applications rather than exhaustive manual pre-screening of every vacancy.
+- The owner-facing routine should normally be limited to opening the vacancy link, copying the prepared cover letter, selecting the indicated resume, and submitting the application on hh.ru.
+- `letter_review` must be exceptional. Use it only for a concrete risk of a false or materially misleading candidate claim, not merely because the vacancy has a low score, a critical gap, an unfamiliar technology, or inconsistent employer metadata.
+- A truthful statement about readiness to learn a missing tool is allowed and must not be treated as a claim of existing experience.
+- Do not add stricter geography, title, technology, or role blockers without an explicit user request or evidence of a critical recurring failure.
+- Geographic and work-format inconsistencies in employer vacancy data are an accepted operational risk. The user and employer may resolve them after an application or invitation.
+- Confirmed experience with generated images, video, voice-over, advertising creatives, marketing funnels, and Paid Social may be used in cover letters. Do not invent platforms, budgets, metrics, campaign scale, or business results that have not been separately confirmed.
