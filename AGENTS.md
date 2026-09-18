@@ -200,3 +200,22 @@ Use these evidence markers in internal working documents:
 - Hard filters must not exclude QA, AQA, full-stack, or adjacent roles solely by title when the description may contain relevant automation, integration, infrastructure, testing, or AI tasks.
 - Industrial automation must be distinguished from IT and business-process automation using the vacancy description and signals such as ASU TP, KIPiA, PLC, SCADA, electrical schematics, control cabinets, industrial controllers, EPLAN, and Kompas-3D.
 - Geography and work-format mismatches are analytical risks, not automatic application blockers. The user will resolve them if an employer invites the candidate.
+
+## n8n workflow editing policy
+
+- Do not modify n8n workflow code by patching, generating, or programmatically rewriting exported JSON files.
+- Do not use Python, JavaScript, jq, sed, regex replacement, or repository patch scripts to change node code inside workflow JSON.
+- Workflow code changes must be described as instructions for the n8n UI.
+- The user applies changes in the n8n UI, tests them there, and exports the resulting workflow JSON into the repository.
+- Exported workflow JSON is treated as generated synchronization output: validate and commit it, but do not hand-edit its embedded node code.
+- Repository scripts may update Markdown documentation and other ordinary source files, but must not rewrite files under job-search/workflows/.
+- Moving an obsolete exported workflow to docs/archive is allowed because it does not modify the workflow code.
+
+## No-guesswork instruction policy
+
+- Do not guess repository structure, node names, variable names, code locations, schemas, or existing implementation details.
+- Before giving modification instructions, read the exact current source from the repository or from the latest user-provided export.
+- Instructions must identify the exact file, node, insertion point, replaced fragment, and final code.
+- Do not tell the user to search for one of several possible names or choose between alternative implementations when the source can be inspected.
+- If the current source is unavailable because the user has unexported local changes, state that limitation and give only a self-contained exact replacement that does not depend on guessed identifiers.
+- Never shift repository inspection work to the user when it can be completed with available tools.
