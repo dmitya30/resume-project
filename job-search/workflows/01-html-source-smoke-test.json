@@ -458,7 +458,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const maxNewVacanciesPerRun = 40;\n\nreturn $input.all().slice(0, maxNewVacanciesPerRun);\n"
+        "jsCode": "const maxNewVacanciesPerRun = 60;\n\nreturn $input.all().slice(0, maxNewVacanciesPerRun);\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -642,7 +642,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "e31e0791-f78f-46e6-b87b-4c64a4f90fee",
+  "versionId": "3ae7ef80-3cd3-4f14-9fae-2851cd254f2a",
   "meta": {
     "instanceId": "7f4be29e1b5b9f47449c11771370d2e5980c4f5bf2a7dec24b58f7126658e77d"
   },

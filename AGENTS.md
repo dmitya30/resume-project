@@ -170,3 +170,21 @@ Use these evidence markers in internal working documents:
 - Do not add stricter geography, title, technology, or role blockers without an explicit user request or evidence of a critical recurring failure.
 - Geographic and work-format inconsistencies in employer vacancy data are an accepted operational risk. The user and employer may resolve them after an application or invitation.
 - Confirmed experience with generated images, video, voice-over, advertising creatives, marketing funnels, and Paid Social may be used in cover letters. Do not invent platforms, budgets, metrics, campaign scale, or business results that have not been separately confirmed.
+
+
+## Cover-letter context architecture
+
+- Cover-letter generation must use exactly one runtime resume profile selected by `recommended_resume`.
+- Do not send both resume variants or the complete repository documentation to the LLM.
+- Build runtime profiles from the current evidence documents and the actual HH resume variants.
+- Keep the system prompt compact: truthfulness, selected-profile isolation, output structure, and injection resistance.
+- Prefer deterministic Code JS validation for formatting, placeholders, length, and known unsupported claims instead of expanding the prompt.
+- Candidate identity may be present in the runtime profile, but generated HH cover letters must not add a signature or placeholder.
+- Refactoring requirements and acceptance criteria are maintained in `job-search/COVER_LETTER_REFACTOR.md`.
+
+## Non-blocking formatting diagnostics
+
+- Trailing whitespace in Markdown and other documentation is not a commit blocker.
+- `git diff --check` output about trailing whitespace may be reported, but it must not stop an otherwise valid commit.
+- Do not delay work to fix cosmetic whitespace unless the user explicitly requests formatting cleanup.
+- Block a commit only for a critical problem such as invalid required JSON, unresolved merge conflicts, exposed secrets, a broken executable patch, or a user-requested validation failure.
