@@ -188,3 +188,15 @@ Use these evidence markers in internal working documents:
 - `git diff --check` output about trailing whitespace may be reported, but it must not stop an otherwise valid commit.
 - Do not delay work to fix cosmetic whitespace unless the user explicitly requests formatting cleanup.
 - Block a commit only for a critical problem such as invalid required JSON, unresolved merge conflicts, exposed secrets, a broken executable patch, or a user-requested validation failure.
+
+## Evidence from performed activities
+
+- Evaluate competencies from confirmed performed activities, not only from official job titles or explicit skill labels.
+- A concrete activity may be used as evidence of a transferable competency when the wording preserves its actual context and scope.
+- Do not convert project activity into unconfirmed years of commercial experience, an official role, or a separate professional specialization.
+- Distinguish direct experience, project activity, transferable evidence, familiarity without practice, and absent experience.
+- Familiarity with a named product is not practical experience with that product.
+- A cover letter that names a product for which only familiarity is confirmed must receive `letter_review`, even if the wording says the candidate is ready to learn or investigate it.
+- Hard filters must not exclude QA, AQA, full-stack, or adjacent roles solely by title when the description may contain relevant automation, integration, infrastructure, testing, or AI tasks.
+- Industrial automation must be distinguished from IT and business-process automation using the vacancy description and signals such as ASU TP, KIPiA, PLC, SCADA, electrical schematics, control cabinets, industrial controllers, EPLAN, and Kompas-3D.
+- Geography and work-format mismatches are analytical risks, not automatic application blockers. The user will resolve them if an employer invites the candidate.
