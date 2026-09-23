@@ -26,7 +26,7 @@ job_vacancies
 | source_query | String | Имя поисковой конфигурации. |
 | description_text | String | Очищенное описание вакансии. |
 | content_hash | String | Хеш нормализованного содержимого. |
-| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, application_blocked, letter_ready, letter_review или sent_to_telegram. |
+| status | String | Текущий статус обработки: found, filtered, parse_failed, scored, application_blocked, letter_ready, letter_review, letter_omitted или sent_to_telegram. |
 | filter_reason | String | Причина отклонения жестким фильтром. |
 | score | Number | Итоговая оценка соответствия. |
 | recommended_resume | String | Рекомендованный вариант резюме. |
@@ -116,3 +116,33 @@ error
 - `meta_phrase_retry_performed` — выполнялась ли повторная генерация из-за мета-фразы.
 
 `model_warnings` не изменяет статус записи. Статус `letter_review` устанавливается только при непустом детерминированном массиве `warnings`.
+
+## Дополнение к статусам и анализу письма
+
+Дата обновления: 23.09.2026.
+
+Актуальный набор статусов этапа подготовки и отправки письма:
+
+- `scored` — вакансия ожидает обработки workflow 04;
+- `application_blocked` — присутствует объективный blocker;
+- `letter_ready` — письмо прошло автоматические проверки;
+- `letter_review` — результат требует ручной проверки;
+- `letter_omitted` — письмо намеренно не рекомендуется;
+- `sent_to_telegram` — Telegram-карточка успешно доставлена.
+
+`letter_omitted` является штатным результатом, а не ошибкой. Для него `cover_letter` и `facts_used` должны быть пустыми.
+
+В `analysis_json.cover_letter_generation` дополнительно сохраняются:
+
+- `letter_strategy`;
+- `employer_need`;
+- `value_offer`;
+- `strategy_reason`;
+- `model_warnings`;
+- `warnings`;
+- `requires_review`;
+- `meta_phrase_retry_performed`.
+
+`letter_review` может устанавливаться не только детерминированной проверкой публичного текста, но и контролируемым fallback при пустом результате `targeted` или `bridge`, а также для письма по вакансии со scoring decision `review` или `reject`.
+
+Workflow 05 читает `letter_ready`, `letter_review` и `letter_omitted`. После успешной доставки запись любого из этих типов переводится в `sent_to_telegram`.

@@ -117,7 +117,7 @@ Use these evidence markers in internal working documents:
 
 ## Current recovery checkpoint
 
-- Repository context was initialized at commit `f7cf603`.
+- Repository context was initialized at commit `a11d778`.
 - `docs/CONTEXT.md` is the compact operational recovery point.
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
@@ -219,3 +219,15 @@ Use these evidence markers in internal working documents:
 - Do not tell the user to search for one of several possible names or choose between alternative implementations when the source can be inspected.
 - If the current source is unavailable because the user has unexported local changes, state that limitation and give only a self-contained exact replacement that does not depend on guessed identifiers.
 - Never shift repository inspection work to the user when it can be completed with available tools.
+
+## Job-search context restoration
+
+When the active task is limited to the job-search subsystem, restore context in this order:
+
+1. Read `AGENTS.md`.
+2. Read the documentation files directly inside `job-search/`.
+3. Do not read `job-search/workflows/` as documentation. Read individual workflow exports only when their current implementation must be inspected or changed.
+4. Do not read the general `docs/` directory unless the task requires candidate evidence, resume methodology, provenance, or the user explicitly requests it.
+5. Verify Git HEAD and working-tree state before preparing repository changes.
+
+An explicit user instruction narrowing the restoration scope takes precedence over the broader default restoration sequence. Missing local workflow changes must not be reconstructed from compressed dialogue.
