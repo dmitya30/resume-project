@@ -117,7 +117,7 @@ Use these evidence markers in internal working documents:
 
 ## Current recovery checkpoint
 
-- Repository context was initialized at commit `a11d778`.
+- Repository context was initialized at commit `4abbdf1`.
 - `docs/CONTEXT.md` is the compact operational recovery point.
 - `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
@@ -164,8 +164,9 @@ Use these evidence markers in internal working documents:
 ## High-volume application policy
 
 - The operational goal is a broad flow of truthful manual applications rather than exhaustive manual pre-screening of every vacancy.
+- Vacancies with final `score < 30` receive the terminal status `application_blocked` with reason `score_below_30`; vacancies with `score >= 30` remain eligible for cover-letter generation unless another objective blocker applies.
 - The owner-facing routine should normally be limited to opening the vacancy link, copying the prepared cover letter, selecting the indicated resume, and submitting the application on hh.ru.
-- `letter_review` must be exceptional. Use it only for a concrete risk of a false or materially misleading candidate claim, not merely because the vacancy has a low score, a critical gap, an unfamiliar technology, or inconsistent employer metadata.
+- `letter_review` is used for a concrete risk of a false or materially misleading candidate claim and for generated letters whose scoring decision is `review` or `reject`; these letters remain available for manual application after owner review.
 - A truthful statement about readiness to learn a missing tool is allowed and must not be treated as a claim of existing experience.
 - Do not add stricter geography, title, technology, or role blockers without an explicit user request or evidence of a critical recurring failure.
 - Geographic and work-format inconsistencies in employer vacancy data are an accepted operational risk. The user and employer may resolve them after an application or invitation.
@@ -180,6 +181,9 @@ Use these evidence markers in internal working documents:
 - Keep the system prompt compact: truthfulness, selected-profile isolation, output structure, and injection resistance.
 - Prefer deterministic Code JS validation for formatting, placeholders, length, and known unsupported claims instead of expanding the prompt.
 - Candidate identity may be present in the runtime profile, but generated HH cover letters must not add a signature or placeholder.
+- Cover-letter generation uses only `targeted` and `bridge`. Every eligible vacancy must receive a substantive non-empty letter; absence of direct experience selects an honest `bridge`, not omission of the letter.
+- `letter_omitted` is retained only as a legacy status for historical records and is not produced by the current workflow 04.
+- Owner-facing deterministic warnings and Telegram warning text must be written in Russian.
 - Refactoring requirements and acceptance criteria are maintained in `job-search/COVER_LETTER_REFACTOR.md`.
 
 ## Non-blocking formatting diagnostics
