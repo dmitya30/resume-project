@@ -74,10 +74,22 @@ Use these evidence markers in internal working documents:
 
 ## Current strategic direction
 
-- Primary direction to validate: AI and business-process automation, n8n integrations, Telegram bots, and related technical implementation.
-- Secondary direction for faster employment: system administrator, IT engineer, infrastructure specialist, or technical support specialist.
-- The final priority depends on verification of recent projects and market fit.
-- Earlier unsuccessful positioning as an AI automation engineer is diagnostic information, not a reason to discard the direction.
+- The active dialogue is the project-level orchestrator and maintains the overall candidate, resume, and job-search strategy.
+- Maintain three separate and truthful resume directions:
+  - AI and business-process automation, n8n integrations, API, Telegram bots, LLM, and self-hosted systems;
+  - IT engineering, system administration, infrastructure, and technical support;
+  - a transitional 1C support and IT engineering direction based only on confirmed system-administration, user-support, CryptoPro CSP, qualified electronic signature, and EDI experience.
+- Do not position the candidate as a 1C developer or an experienced 1C consultant without separately confirmed practical experience.
+- The current primary vacancy sources are Hirify, TalentMove, and Remote-job.
+- HH is temporarily excluded as a vacancy-search and application channel. It remains the platform for creating, publishing, maintaining, and exporting the three resume variants in PDF, DOCX, or TXT when the interface supports the required export.
+- Telegram channels and direct employer career sites are additional channels to be introduced after the initial manual search stage.
+- Paid-response services, paid access to employer contacts, and platforms such as YouDo or Profi are excluded because payment does not guarantee employer engagement.
+- Prefer written contact. Direct cold calls are not the primary channel because the candidate communicates more effectively in writing.
+- Search for permanent, remote, hybrid, part-time, project, and fractional work. A conventional office schedule may be used as a financial bridge but is not the only long-term model.
+- Develop a parallel client and partner channel for external IT support, infrastructure, Linux/VPS, integrations, automation, CryptoPro CSP, qualified electronic signatures, and related confirmed services.
+- The long-term independent-work target is 2-4 recurring clients plus separate projects, but immediate financial stabilization has priority.
+- Vacancy-search automation is deferred to the backlog for an indefinite period. First collect evidence from manual work across several sources.
+- Do not modify files under `job-search/` or `job-search/workflows/` from the orchestrator dialogue unless the user explicitly starts a subsystem task and the exact current files are inspected.
 
 ## Document maintenance
 
@@ -117,13 +129,16 @@ Use these evidence markers in internal working documents:
 
 ## Current recovery checkpoint
 
-- Repository context was initialized at commit `4abbdf1`.
-- `docs/CONTEXT.md` is the compact operational recovery point.
-- `docs/CANDIDATE_STATE.md` is the current replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
-- `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the immutable historical recovery and provenance source.
-- The accepted ООО «Артэкс» corrections are reflected in `docs/CANDIDATE_STATE.md`.
-- The modern-project inventory is stored in `docs/PROJECT_INVENTORY.md`; a limited public evidence review was completed on 02.09.2026. Initial job-market research was completed on 03.09.2026 and recorded in `docs/MARKET_RESEARCH.md` and `docs/REQUIREMENTS_MATRIX.md`. The old HH resume audit is recorded in `docs/HH_PROFILE_AUDIT.md`. The current phase is building and launching two new HH resumes: «Инженер по автоматизации и AI-интеграциям» and «IT-инженер / системный администратор». Only HH is used at this stage; Habr Career and other channels are deferred.
-- The field-by-field HH wizard map, current main-resume settings, skill levels, work-experience blocks and remaining launch checks are stored in `docs/HH_WIZARD_GUIDE.md`.
+- `docs/CONTEXT.md` is the compact operational recovery point for the overall project.
+- `docs/CANDIDATE_STATE.md` is the replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
+- `docs/JOB_SEARCH_STRATEGY.md` is the current source for channels, priorities, manual-search policy, and the automation backlog.
+- `docs/HH_WIZARD_GUIDE.md` records the HH resume variants, platform settings, approved target wording, and export workflow.
+- `docs/PROJECT_INVENTORY.md` stores detailed modern-project evidence and must not be rewritten merely because the search strategy changes.
+- `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the historical recovery and provenance source.
+- Three resume directions are active or planned: AI automation, IT infrastructure, and transitional 1C support / IT engineering.
+- The active vacancy sources are Hirify, TalentMove, and Remote-job. HH is temporarily limited to resume creation, publication, maintenance, and export.
+- Manual search observations take priority over the dormant high-volume automation policy.
+- The `job-search/` subsystem was developed in a separate dialogue. Its workflow implementation is not part of ordinary orchestrator maintenance.
 - Do not delete or rewrite the historical protocol without explicit user approval.
 
 ## Public text character policy
@@ -161,17 +176,18 @@ Use these evidence markers in internal working documents:
 - Before activating a Schedule Trigger, complete one successful manual orchestration run.
 
 
-## High-volume application policy
+## Multi-channel manual search policy
 
-- The operational goal is a broad flow of truthful manual applications rather than exhaustive manual pre-screening of every vacancy.
-- Vacancies with final `score < 30` receive the terminal status `application_blocked` with reason `score_below_30`; vacancies with `score >= 30` remain eligible for cover-letter generation unless another objective blocker applies.
-- The owner-facing routine should normally be limited to opening the vacancy link, copying the prepared cover letter, selecting the indicated resume, and submitting the application on hh.ru.
-- `letter_review` is used for a concrete risk of a false or materially misleading candidate claim and for generated letters whose scoring decision is `review` or `reject`; these letters remain available for manual application after owner review.
-- A truthful statement about readiness to learn a missing tool is allowed and must not be treated as a claim of existing experience.
-- Do not add stricter geography, title, technology, or role blockers without an explicit user request or evidence of a critical recurring failure.
-- Geographic and work-format inconsistencies in employer vacancy data are an accepted operational risk. The user and employer may resolve them after an application or invitation.
-- Confirmed experience with generated images, video, voice-over, advertising creatives, marketing funnels, and Paid Social may be used in cover letters. Do not invent platforms, budgets, metrics, campaign scale, or business results that have not been separately confirmed.
-
+- The previous high-volume HH application strategy is no longer active. Approximately 330 HH applications produced no practical conversion into employment.
+- Do not optimize for application count. Optimize for relevant responses, interviews, paid trial work, projects, and recurring client relationships.
+- Review vacancies manually during the observation period and record source-specific results before designing or reactivating automation.
+- Use one targeted resume direction per vacancy. Do not combine AI automation, infrastructure, and 1C positioning in one response unless the vacancy itself requires that combination.
+- Prefer vacancy sources and contacts that allow a free response or direct written communication.
+- Do not use paid responses, paid contact access, or paid promotion as the default answer to low conversion.
+- A vacancy may be approached through its original employer page or a direct written contact when this is available and appropriate.
+- Telegram channels and direct employer sites are additional channels, not substitutes for source verification.
+- Keep written communication concise: role, relevant evidence, one matching case, availability, and one concrete question.
+- Vacancy-search automation remains preserved but dormant in the backlog. Do not delete it, rebuild it, or change workflow thresholds until manual multi-source evidence justifies a new specification.
 
 ## Cover-letter context architecture
 
