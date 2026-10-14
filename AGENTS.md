@@ -251,3 +251,28 @@ When the active task is limited to the job-search subsystem, restore context in 
 5. Verify Git HEAD and working-tree state before preparing repository changes.
 
 An explicit user instruction narrowing the restoration scope takes precedence over the broader default restoration sequence. Missing local workflow changes must not be reconstructed from compressed dialogue.
+
+## Vacancy discovery and direct-contact policy
+
+- The active vacancy-discovery sources are HH, Hirify, TalentMove, and Remote-job.
+- Do not submit applications through HH. HH is used for manual vacancy discovery, resume publication, maintenance, links, and export.
+- Treat HH and other vacancy aggregators primarily as discovery sources.
+- For vacancies found through an aggregator, look for the original publication, employer website, career page, email, recruiter contact, or another direct communication route.
+- Prefer direct written contact, with email as the primary channel.
+- A selective phone call is allowed when no suitable written contact is available and the vacancy is sufficiently relevant.
+- Telegram channels, direct employer sites, professional communities, and personal contacts are additional discovery and communication channels.
+- Paid applications and paid access to contacts on YouDo, Profi, and similar services are excluded.
+- Three resume directions are active: AI automation, IT infrastructure, and 1C administration / support.
+- Job-search automation remains in the backlog until manual multi-source results provide enough evidence for a separate decision.
+
+## Non-blocking formatting and corrective patches
+
+- Cosmetic formatting issues are never blockers by themselves.
+- A missing final newline, LF versus CRLF, trailing whitespace, Markdown style, wrapping, or similar formatting detail must not abort a documentation update, commit, or push unless it causes a demonstrated functional or semantic defect.
+- Do not add custom blocking validators for cosmetic formatting when Git or the existing project checks already handle it.
+- Blocking validation is limited to defects that can corrupt content or behavior, including syntax errors, missing required content, NUL bytes, unresolved merge markers, invalid structured data, or a failed functional check.
+- After dialogue compression, re-read and follow this rule before adding validation logic.
+- When a generated temporary script has a localized defect, provide only a minimal patch to that existing script.
+- Do not repeat the full generated script for a localized correction.
+- Do not rerun the original generator command after patching a temporary script, because it can overwrite the correction.
+- After applying a corrective patch, rerun only the patched temporary script unless a clean rebuild is explicitly required and justified.
