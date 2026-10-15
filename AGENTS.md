@@ -75,20 +75,21 @@ Use these evidence markers in internal working documents:
 ## Current strategic direction
 
 - The active dialogue is the project-level orchestrator and maintains the overall candidate, resume, and job-search strategy.
-- Maintain three separate and truthful resume directions:
+- Maintain three separate, completed, and truthful resume directions:
   - AI and business-process automation, n8n integrations, API, Telegram bots, LLM, and self-hosted systems;
   - IT engineering, system administration, infrastructure, and technical support;
-  - a transitional 1C support and IT engineering direction based only on confirmed system-administration, user-support, CryptoPro CSP, qualified electronic signature, and EDI experience.
+  - 1C administration and support based only on confirmed platform maintenance, user support, CryptoPro CSP, qualified electronic signature, EDI, and adjacent infrastructure experience.
 - Do not position the candidate as a 1C developer or an experienced 1C consultant without separately confirmed practical experience.
-- The current primary vacancy sources are Hirify, TalentMove, and Remote-job.
-- HH is temporarily excluded as a vacancy-search and application channel. It remains the platform for creating, publishing, maintaining, and exporting the three resume variants in PDF, DOCX, or TXT when the interface supports the required export.
-- Telegram channels and direct employer career sites are additional channels to be introduced after the initial manual search stage.
-- Paid-response services, paid access to employer contacts, and platforms such as YouDo or Profi are excluded because payment does not guarantee employer engagement.
-- Prefer written contact. Direct cold calls are not the primary channel because the candidate communicates more effectively in writing.
-- Search for permanent, remote, hybrid, part-time, project, and fractional work. A conventional office schedule may be used as a financial bridge but is not the only long-term model.
+- The active vacancy-discovery sources are HH, Hirify, TalentMove, Remote-job, relevant Telegram channels, and direct employer career sites.
+- Do not submit applications through HH. Use it for vacancy discovery, resume publication, maintenance, links, and export.
+- Treat aggregators primarily as discovery sources. Look for the original publication, employer site, career page, public email, recruiter, hiring manager, or another direct route.
+- Prefer written direct contact, especially email. A selective phone call is allowed when no suitable written route exists.
+- Paid-response services and paid access to contacts on YouDo, Profi, and similar platforms are excluded.
+- Search for permanent, remote, hybrid, part-time, project, and fractional work.
 - Develop a parallel client and partner channel for external IT support, infrastructure, Linux/VPS, integrations, automation, CryptoPro CSP, qualified electronic signatures, and related confirmed services.
-- The long-term independent-work target is 2-4 recurring clients plus separate projects, but immediate financial stabilization has priority.
-- Vacancy-search automation is deferred to the backlog for an indefinite period. First collect evidence from manual work across several sources.
+- Record manual-search observations in `docs/JOB_SEARCH_LOG.md`.
+- Treat career-channel recommendations as external hypotheses, not verified market facts. Their provenance and project decisions are recorded in `docs/CAREER_CHANNEL_FINDINGS.md`.
+- Vacancy-search automation remains in the backlog until manual evidence justifies a new specification.
 - Do not modify files under `job-search/` or `job-search/workflows/` from the orchestrator dialogue unless the user explicitly starts a subsystem task and the exact current files are inspected.
 
 ## Document maintenance
@@ -130,15 +131,18 @@ Use these evidence markers in internal working documents:
 ## Current recovery checkpoint
 
 - `docs/CONTEXT.md` is the compact operational recovery point for the overall project.
-- `docs/CANDIDATE_STATE.md` is the replaceable source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
-- `docs/JOB_SEARCH_STRATEGY.md` is the current source for channels, priorities, manual-search policy, and the automation backlog.
-- `docs/HH_WIZARD_GUIDE.md` records the HH resume variants, platform settings, approved target wording, and export workflow.
+- `docs/CANDIDATE_STATE.md` is the source of accepted candidate facts, risks, unresolved questions, and resume-safe wording.
+- `docs/JOB_SEARCH_STRATEGY.md` is the current source for channels, priorities, direct-contact policy, experiments, and the automation backlog.
+- `docs/JOB_SEARCH_LOG.md` is the append-only operational journal for manually processed vacancies and direct contacts.
+- `docs/CAREER_CHANNEL_FINDINGS.md` stores source-grounded recommendations and hypotheses extracted from career-related Telegram channels.
+- `docs/HH_WIZARD_GUIDE.md` records the three HH resume variants, platform settings, approved wording, and export workflow.
 - `docs/PROJECT_INVENTORY.md` stores detailed modern-project evidence and must not be rewritten merely because the search strategy changes.
 - `docs/archive/FULL_PROTOCOL_2026-08-27.md` remains the historical recovery and provenance source.
-- Three resume directions are active or planned: AI automation, IT infrastructure, and transitional 1C support / IT engineering.
-- The active vacancy sources are Hirify, TalentMove, and Remote-job. HH is temporarily limited to resume creation, publication, maintenance, and export.
+- Three completed resume directions are active: AI automation, IT infrastructure, and 1C administration / support.
+- The active discovery sources are HH, Hirify, TalentMove, Remote-job, Telegram channels, and direct employer sites.
+- Applications through HH are disabled by strategy. Prefer original sources and direct written contact.
 - Manual search observations take priority over the dormant high-volume automation policy.
-- The `job-search/` subsystem was developed in a separate dialogue. Its workflow implementation is not part of ordinary orchestrator maintenance.
+- The `job-search/` subsystem was developed in a separate dialogue and is not part of ordinary orchestrator maintenance.
 - Do not delete or rewrite the historical protocol without explicit user approval.
 
 ## Public text character policy
@@ -276,3 +280,17 @@ An explicit user instruction narrowing the restoration scope takes precedence ov
 - Do not repeat the full generated script for a localized correction.
 - Do not rerun the original generator command after patching a temporary script, because it can overwrite the correction.
 - After applying a corrective patch, rerun only the patched temporary script unless a clean rebuild is explicitly required and justified.
+
+## Manual job-search journal policy
+
+- Record one row per vacancy, project opportunity, partner lead, or direct employer approach in `docs/JOB_SEARCH_LOG.md`.
+- Use ISO dates in the journal: `YYYY-MM-DD`.
+- Record both the discovery source and the original source when they differ.
+- Record the selected resume direction, communication route, current status, response, next action, and experiment label.
+- Do not commit personal email addresses, personal phone numbers, private Telegram handles, credentials, or other non-public contact data. Store only the public source URL and a generic contact route such as company email, recruiter, hiring manager, form, Telegram, or phone.
+- Measure relevant responses, interviews, paid tasks, projects, and offers. Raw action count is not the optimization target.
+- Track vacancy freshness as an experiment. The `0-2d`, `3-7d`, and `8d+` buckets are operational categories, not proven performance thresholds.
+- Where practical, change one material variable at a time. Do not call an uncontrolled comparison an A/B test.
+- Career-blog claims, conversion benchmarks, and paid-product promises are hypotheses unless independently verified or confirmed by the candidates own journal data.
+- Never fabricate metrics to make a resume bullet look stronger. Use confirmed scale, action, technical result, or business result only.
+- One follow-up after 3-4 working days is the default. A second follow-up is optional only for a highly relevant opportunity and must not become spam.
