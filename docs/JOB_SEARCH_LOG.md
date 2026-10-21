@@ -69,8 +69,8 @@
 | JS-02 | 2026-10-20 | 2026-10-19 | 0-2d | [HH](https://hh.ru/vacancy/138230358) | Альтервиа | Системный администратор | [HH](https://hh.ru/vacancy/138230358) | INFRA | fresh_48h, direct_email, message_case | публичный email компании | 2026-10-20 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Частичная занятость; письмо отправлено с INFRA-резюме; задан вопрос о частоте присутствия и серверном контуре |
 | JS-03 | 2026-10-20 | 2026-10-16 | 3-7d | [Remote-job](https://remote-job.ru/vacancy/show/1526784/sistemnyj-administrator) | Алтек | Системный администратор |  | INFRA | direct_email, message_role_match | публичный email компании | 2026-10-20 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Гибрид и частичная занятость; письмо отправлено с INFRA-резюме; задан вопрос об объеме занятости и присутствии в офисе |
 
-## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
-https://hh.ru/vacancy/138231589
+\n| JS-04 | 2026-10-21 | 2026-10-09 | 8d+ | [HH](https://hh.ru/vacancy/138288256) | Ювента | Системный администратор | [HH](https://hh.ru/vacancy/138288256) | INFRA | direct_email, message_case | публичный email компании |  |  |  | contact_found |  | Отправить адресное письмо с INFRA-резюме; уточнить дату начала посещений офиса | Частичная занятость; удаленная поддержка; офис около Девяткино 2 раза в неделю по половине дня; официальный контакт: https://uventa.org.ru/kontakty; AD и Asterisk не заявлять |\n## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
+https://hh.ru/vacancy/138470761\nhttps://hh.ru/vacancy/138707312\nhttps://hh.ru/vacancy/137305475\nhttps://hirify.me/jobs/915643-ai-automation-specialist-ai-engineer\nhttps://hirify.me/jobs/1139907-it-generalist-sistemnoe-administrirovanie-i-ai\nhttps://talent-move.ru/jobs/system-administrator-1c-remote-280326-146872/\nhttps://hh.ru/vacancy/138476079\nhttps://hh.ru/vacancy/138231589
 https://hh.ru/vacancy/138118761
 https://hirify.me/jobs/1203208-specialist-2-linii-texniceskoi-podderzki-1s-l2
 https://talent-move.ru/jobs/sistemnyy-administrator-proektnaya-rabota-031026-281523/
