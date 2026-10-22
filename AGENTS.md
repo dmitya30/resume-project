@@ -119,7 +119,7 @@ Use these evidence markers in internal working documents:
 - If a delivered script has one localized defect, provide a minimal corrective patch rather than repeating unrelated operations.
 - Do not print full Git diffs from executable scripts.
 - Before commit, verify the exact staged file list and run `git diff --cached --check`.
-- A commit-and-push operation may be included only when explicitly requested or approved by the user.
+- A requested repository change is approval to complete the full cycle immediately: validate, stage, commit, and push in the same executable operation. Stop before commit or push only when the user explicitly requests review without committing, validation finds a critical defect, or push fails.
 - On success, report only concise validation, commit, push, and status information. Diagnostic output is allowed on failure.
 
 ## Privacy and safety
@@ -294,3 +294,11 @@ An explicit user instruction narrowing the restoration scope takes precedence ov
 - Career-blog claims, conversion benchmarks, and paid-product promises are hypotheses unless independently verified or confirmed by the candidates own journal data.
 - Never fabricate metrics to make a resume bullet look stronger. Use confirmed scale, action, technical result, or business result only.
 - One follow-up after 3-4 working days is the default. A second follow-up is optional only for a highly relevant opportunity and must not become spam.
+
+## Confirmed PostgreSQL scope
+
+- Practical PostgreSQL use is confirmed in one personal automation project.
+- PostgreSQL runs in Docker Compose alongside n8n and serves one automated orchestration process.
+- Confirmed activities: database creation, user and permission management, table creation, basic SQL queries, psql, pgAdmin, pg_dump, restore through pg_restore or psql, automated backups, log review, containerized updates, and database transfer between servers.
+- Do not convert this into experience administering PostgreSQL for 1C, a high-load or multi-user production database, performance tuning, active-connection diagnostics, replication, parameter tuning, or direct operating-system installation.
+- Resumes and cover letters may state practical PostgreSQL experience only when they preserve this project context and scope.
