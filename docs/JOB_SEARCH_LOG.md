@@ -68,9 +68,9 @@
 | JS-01 | 2026-10-20 | 2026-10-19 | 0-2d | [HH](https://hh.ru/vacancy/138628693) | ДТК-ЮГ | Инженер по автоматизации бизнес-процессов и внедрению ИИ | [HH](https://hh.ru/vacancy/138628693) | AI | fresh_48h, direct_email, message_case | публичный email руководителя | 2026-10-20 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Сильное совпадение; удаленная работа; письмо отправлено с AI-резюме |
 | JS-02 | 2026-10-20 | 2026-10-19 | 0-2d | [HH](https://hh.ru/vacancy/138230358) | Альтервиа | Системный администратор | [HH](https://hh.ru/vacancy/138230358) | INFRA | fresh_48h, direct_email, message_case | публичный email компании | 2026-10-20 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Частичная занятость; письмо отправлено с INFRA-резюме; задан вопрос о частоте присутствия и серверном контуре |
 | JS-03 | 2026-10-20 | 2026-10-16 | 3-7d | [Remote-job](https://remote-job.ru/vacancy/show/1526784/sistemnyj-administrator) | Алтек | Системный администратор |  | INFRA | direct_email, message_role_match | публичный email компании | 2026-10-20 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Гибрид и частичная занятость; письмо отправлено с INFRA-резюме; задан вопрос об объеме занятости и присутствии в офисе |
-
-
 | JS-04 | 2026-10-21 | 2026-10-09 | 8d+ | [HH](https://hh.ru/vacancy/138288256) | Ювента | Системный администратор | [HH](https://hh.ru/vacancy/138288256) | INFRA | direct_email, message_case | публичный email компании |  |  |  | contact_found |  | Отправить адресное письмо с INFRA-резюме; уточнить дату начала посещений офиса | Частичная занятость; удаленная поддержка; офис около Девяткино 2 раза в неделю по половине дня; официальный контакт: https://uventa.org.ru/kontakty; AD и Asterisk не заявлять |
+| JS-05 | 2026-10-22 | 2026-10-02 | 8d+ | [HH](https://hh.ru/vacancy/138055992) | IRuler | Специалист по автоматизации и AI-инструментам (n8n / Python) | [HH](https://hh.ru/vacancy/138055992) | AI | direct_email, message_case | публичный email компании |  |  |  | contact_found |  | Отправить адресное письмо с AI-резюме; уточнить актуальность вакансии | Удаленная работа; сильное совпадение по n8n и интеграциям; пробелы по PostgreSQL и уверенному изменению чужого Python-кода; официальный контакт: https://iruler-taxi.ru/consent-personal-data |
+| JS-06 | 2026-10-22 |  | unknown | [Карьерная страница](https://otr-soft.ru/rabota/vacancy/konsultant/) | Тиражные решения 1С-Рарус | Начинающий специалист / Консультант технической поддержки / Консультант 1С | [Карьерная страница](https://otr-soft.ru/rabota/vacancy/konsultant/) | 1C | direct_email, message_role_match | карьерный email |  |  |  | contact_found |  | Отправить адресное письмо с 1C-резюме | Удаленная работа; опыт не требуется; оплачиваемая стажировка и обучение; не заявлять опыт полноценного консультанта или разработчика 1С |
 ## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
 https://hh.ru/vacancy/138470761
 https://hh.ru/vacancy/138707312
@@ -84,6 +84,26 @@ https://hh.ru/vacancy/138118761
 https://hirify.me/jobs/1203208-specialist-2-linii-texniceskoi-podderzki-1s-l2
 https://talent-move.ru/jobs/sistemnyy-administrator-proektnaya-rabota-031026-281523/
 https://talent-move.ru/jobs/devops-sistemnyj-administrator-1s-ru-161026-286950/
+
+https://hh.ru/vacancy/138723007
+
+https://hh.ru/vacancy/138215376
+
+https://hirify.me/jobs/1287226-ai-automation-engineer-n8n
+
+https://hirify.me/jobs/1032179-ai-automation-specialist-n8n
+
+https://getmatch.ru/vacancies/33541-razrabotchik-n8n-integratsionnyi-inzhiniring
+
+https://hirehi.ru/devops/sistemnyi-administrator-1s-148440
+
+https://aiston.ru/vacancies/sistemnyj-administrator/
+
+https://hh.ru/vacancy/137471009
+
+https://hh.ru/vacancy/138014342
+
+https://hh.ru/vacancy/137466784
 
 ## 7. Показатели для периодического обзора
 
