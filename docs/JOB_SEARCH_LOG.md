@@ -74,6 +74,7 @@
 | JS-05 | 2026-10-22 | 2026-10-02 | 8d+ | [HH](https://hh.ru/vacancy/138055992) | IRuler | Специалист по автоматизации и AI-инструментам (n8n / Python) | [HH](https://hh.ru/vacancy/138055992) | AI | direct_email, message_case | публичный email компании | 2026-10-22 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Удаленная работа; сильное совпадение по n8n и интеграциям; письмо отправлено с AI-резюме; практический опыт PostgreSQL подтвержден пользователем; объем и контур опыта не уточнены |
 | JS-06 | 2026-10-22 |  | unknown | [Карьерная страница](https://otr-soft.ru/rabota/vacancy/konsultant/) | Тиражные решения 1С-Рарус | Начинающий специалист / Консультант технической поддержки / Консультант 1С | [Карьерная страница](https://otr-soft.ru/rabota/vacancy/konsultant/) | 1C | direct_email, message_role_match | карьерный email | 2026-10-22 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Удаленная работа; опыт не требуется; оплачиваемая стажировка и обучение; письмо отправлено с 1C-резюме; опыт полноценного консультанта или разработчика 1С не заявлен |
 
+| JS-08 | 2026-10-22 | 2026-10-19 | 3-7d | [Hirify](https://hirify.me/jobs/1288021-ai-automation-engineer-n8n) | КапиталСтрой | AI Automation Engineer / n8n-разработчик | [Telegram-публикация](https://tgstat.ru/channel/@workayte/4367) | AI | direct_other, message_case | публичный Telegram-контакт из вакансии | 2026-10-22 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Сильное совпадение по n8n, API, Python/JS, SQL и LLM; отправлено AI-резюме; юридическое лицо и официальный сайт требуется подтвердить до следующего этапа |
 ## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
 https://hh.ru/vacancy/138470761
 https://hh.ru/vacancy/138707312
@@ -107,6 +108,23 @@ https://hh.ru/vacancy/137471009
 https://hh.ru/vacancy/138014342
 
 https://hh.ru/vacancy/137466784
+
+
+[https://t.me/s/hr_itwork?q=%23AI&before=2497](https://t.me/s/hr_itwork?q=%23AI&before=2497)
+
+[https://hh.ru/vacancy/130937384](https://hh.ru/vacancy/130937384)
+
+[https://odintsovo.hh.ru/vacancy/138380294](https://odintsovo.hh.ru/vacancy/138380294)
+
+[https://hh.ru/vacancy/136196007](https://hh.ru/vacancy/136196007)
+
+[https://hirify.me/jobs/1178913-automation-engineer-python-ai](https://hirify.me/jobs/1178913-automation-engineer-python-ai)
+
+[https://hirify.me/jobs/1022837-senior-automation-engineer-workato](https://hirify.me/jobs/1022837-senior-automation-engineer-workato)
+
+[https://talent-move.ru/jobs/sistemnyj-administrator-affiliate-marketing-220926-276532/](https://talent-move.ru/jobs/sistemnyj-administrator-affiliate-marketing-220926-276532/)
+
+[https://www.doc-lvv.ru/vacancy_1C_system_administrator](https://www.doc-lvv.ru/vacancy_1C_system_administrator)
 
 ## 7. Показатели для периодического обзора
 
