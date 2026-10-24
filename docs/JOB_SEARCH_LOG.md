@@ -76,6 +76,8 @@
 | JS-08 | 2026-10-22 | 2026-10-19 | 3-7d | [Hirify](https://hirify.me/jobs/1288021-ai-automation-engineer-n8n) | КапиталСтрой | AI Automation Engineer / n8n-разработчик | [Telegram-публикация](https://tgstat.ru/channel/@workayte/4367) | AI | direct_other, message_case | публичный Telegram-контакт из вакансии | 2026-10-22 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Сильное совпадение по n8n, API, Python/JS, SQL и LLM; отправлено AI-резюме; юридическое лицо и официальный сайт требуется подтвердить до следующего этапа |---|---|
 | JS-09 | 2026-10-23 | 2026-09-25 | 8d+ | [TalentMove](https://talent-move.ru/jobs/junior-analitik-avtomatizator-topface-media-moskva-091026-283819/) | Topface Media | Инженер ИИ-автоматизаций / AI automation engineer | [HH](https://hh.ru/vacancy/137196945) | AI | direct_email, message_case | карьерный email | 2026-10-23 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Удаленная работа; сильное совпадение по n8n, API, webhooks и AI-агентам; письмо отправлено с AI-резюме; Битрикс24 и Google Apps Script не заявлены |---|---|
 | JS-10 | 2026-10-23 |  | unknown | [Официальная страница вакансий](https://metro.spb.ru/vakans.html#SIT) | ГУП «Петербургский метрополитен» | Инженер-программист 1 категории | [Официальная страница вакансий](https://metro.spb.ru/vakans.html#SIT) | INFRA | direct_email, message_role_match | публичный email ответственного лица | 2026-10-23 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Офис у ст. м. Приморская; мониторинг и обслуживание серверного и сетевого оборудования; письмо подготовлено с INFRA-резюме; опыт промышленной виртуализации и масштаб инфраструктуры не заявлены |---|---|
+| JS-11 | 2026-10-24 | 2026-10-20 | 3-7d | [Dream Job](https://dreamjob.ru/employers/6778048/vakansii/138669243) | Добрый Ортопед | Системный администратор, сопровождение IT-инфраструктуры | [HH](https://hh.ru/vacancy/138669243) | INFRA | direct_email, message_case | публичный email компании | 2026-10-24 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Частичная занятость, удаленная работа с выездами по Санкт-Петербургу; письмо подготовлено с INFRA-резюме; опыт SQL-сервера 1С, УТ, УНФ, ККТ и Mac не заявлен |---|---|
+| JS-12 | 2026-10-24 | 2026-10-22 | 0-2d | [Remote-job](https://remote-job.ru/vacancy/show/1525449/konsultant-texnicheskoj-podderzhki) | Деснол | Консультант технической поддержки | [Карьерная страница](https://desnol.ru/careers/) | 1C | direct_email, message_role_match | карьерный email | 2026-10-24 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Полностью удаленная работа; компания рассматривает кандидатов без опыта с продуктом и предлагает обучение; письмо подготовлено с 1C-резюме; опыт 1С:Итилиум и полноценного консультанта 1С не заявлен |---|---|
 
 ## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
 https://hh.ru/vacancy/138470761
@@ -112,6 +114,13 @@ https://samara.hh.ru/vacancy/138753859
 https://career.habr.com/vacancies/1000168992
 https://career.habr.com/vacancies/1000169425
 https://hirify.me/jobs/1257097-it-solutions-engineer-automation
+https://hh.ru/vacancy/138749264
+https://spb.hh.ru/vacancy/138669734
+https://remote-job.ru/vacancy/show/1530366/sistemnyj-administrator
+https://hh.ru/vacancy/138793245
+https://hirehi.ru/devops/sistemnyi-administrator-172779
+https://remote-job.ru/vacancy/show/1526138/sistemnyj-administrator
+https://hirify.me/jobs/1308555-ai-dizainer-specialist-po-neirosetiam-v-fashion
 
 ## 7. Показатели для периодического обзора
 
