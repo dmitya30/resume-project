@@ -80,6 +80,9 @@ info@altec.ru |---|
 | JS-11 | 2026-10-24 | 2026-10-20 | 3-7d | [Dream Job](https://dreamjob.ru/employers/6778048/vakansii/138669243) | Добрый Ортопед | Системный администратор, сопровождение IT-инфраструктуры | [HH](https://hh.ru/vacancy/138669243) | INFRA | direct_email, message_case | публичный email компании | 2026-10-24 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Частичная занятость, удаленная работа с выездами по Санкт-Петербургу; письмо подготовлено с INFRA-резюме; опыт SQL-сервера 1С, УТ, УНФ, ККТ и Mac не заявлен | office@dobriyortoped.ru | +7 (812) 448-83-33 |
 | JS-12 | 2026-10-24 | 2026-10-22 | 0-2d | [Remote-job](https://remote-job.ru/vacancy/show/1525449/konsultant-texnicheskoj-podderzhki) | Деснол | Консультант технической поддержки | [Карьерная страница](https://desnol.ru/careers/) | 1C | direct_email, message_role_match | карьерный email | 2026-10-24 |  |  | contacted |  | Follow-up 1 через 3-4 рабочих дня при отсутствии ответа | Полностью удаленная работа; компания рассматривает кандидатов без опыта с продуктом и предлагает обучение; письмо подготовлено с 1C-резюме; опыт 1С:Итилиум и полноценного консультанта 1С не заявлен | job@desnol.ru | +7 (495) 933-48-41 |
 
+| JS-13 | 2026-10-24 | 2026-10-19 | 3-7d | [HH](https://hh.ru/vacancy/138597874) | Сколиолоджик.ру | Системный администратор | [HH](https://hh.ru/vacancy/138597874) | INFRA | direct_other, message_case | официальная форма вакансий и публичный email компании | 2026-10-24 |  |  | contacted |  | Follow-up 1 2026-10-28 при отсутствии содержательного ответа | Гибрид в Санкт-Петербурге; сильное совпадение по пользовательской поддержке, Windows, Linux, MikroTik, сетям, резервному копированию и сопровождению 1С; практический опыт AD/GPO, Proxmox и MS SQL не заявлен |---|---|
+| JS-14 | 2026-10-24 | 2026-10-23 | 0-2d | [HireHi](https://hirehi.ru/devops/sistemnyi-administrator-dlia-korporativnykh-klientov-176010) | Айтибот | Системный администратор для корпоративных клиентов |  | INFRA | direct_email, message_role_match | публичный email компании | 2026-10-24 |  |  | contacted |  | Follow-up 1 2026-10-28 при отсутствии содержательного ответа | Офис и выезды в Санкт-Петербурге; сильное совпадение по рабочим станциям, Windows, комплектующим, оргтехнике, пользовательской поддержке и сетевому оборудованию; практический опыт AD не заявлен |---|---|
+
 ## 6.1 ОТКЛОЕНО (не исследовать в следующих итерациях, исключать)
 https://hh.ru/vacancy/138470761
 https://hh.ru/vacancy/138707312
@@ -122,6 +125,19 @@ https://hh.ru/vacancy/138793245
 https://hirehi.ru/devops/sistemnyi-administrator-172779
 https://remote-job.ru/vacancy/show/1526138/sistemnyj-administrator
 https://hirify.me/jobs/1308555-ai-dizainer-specialist-po-neirosetiam-v-fashion
+
+https://hirify.me/jobs/1037597-ai-automation-engineer
+https://youngjunior.ru/data/jobs/59889
+https://hireseeker.ru/vacancy/10007485-ai-automation-engineer
+https://hh.ru/vacancy/138593004
+https://hirehi.ru/devops/administrator-1s-155210
+https://hirehi.ru/devops/konsul-tant-po-edo-v-1s-176820
+https://volginskiy.hh.ru/vacancy/138793245
+https://tssolution.ru/vakansii/sistemnyj-administrator
+https://hh.ru/vacancy/138110716
+https://hirify.me/jobs/1190744-windows-linux-system-administrator
+https://hirehi.ru/devops/sistemnyi-administrator-133843
+https://hirehi.ru/development/it-spetsialist-po-avtomatizatsii-v-1s-predpriiatie-162116
 
 ## 7. Показатели для периодического обзора
 
